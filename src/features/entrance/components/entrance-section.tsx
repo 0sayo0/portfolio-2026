@@ -218,7 +218,7 @@ export function EntranceSection() {
                       clipPath: "polygon(-20% -20%, 120% -20%, 120% 120%, -20% 120%)",
                     }}
                     transition={{
-                      duration: shouldReduceMotion ? 0 : 0.95,
+                      duration: shouldReduceMotion ? 0 : 1.05,
                       delay: shouldReduceMotion ? 0 : entranceTiming.title,
                       ease: entranceEase,
                     }}
@@ -243,7 +243,7 @@ export function EntranceSection() {
                       clipPath: "polygon(-20% -20%, 120% -20%, 120% 120%, -20% 120%)",
                     }}
                     transition={{
-                      duration: shouldReduceMotion ? 0 : 0.95,
+                      duration: shouldReduceMotion ? 0 : 1.05,
                       delay: shouldReduceMotion ? 0 : entranceTiming.title + 0.09,
                       ease: entranceEase,
                     }}
@@ -293,7 +293,7 @@ export function EntranceSection() {
 
           {/* Bottom metadata */}
           <motion.div
-            className="col-span-4"
+            className="col-span-4 md:col-span-12"
             style={
               shouldReduceMotion
                 ? undefined
