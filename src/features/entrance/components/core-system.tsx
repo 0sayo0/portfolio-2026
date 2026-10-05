@@ -2,6 +2,8 @@
 
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 
+import { entranceEase, entranceTiming } from "@/features/entrance/lib/entrance-motion";
+
 const nodes = [
   { id: "frontend", cx: 50, cy: 11, r: 1.35, label: "FE" },
   { id: "backend", cx: 79, cy: 29, r: 1.05, label: "BE" },
@@ -63,7 +65,7 @@ export function CoreSystem() {
 
   return (
     <motion.div
-      className="relative aspect-square w-full max-w-[20rem] sm:max-w-[24rem] md:max-w-124"
+      className="relative aspect-square w-full max-w-80 sm:max-w-96 md:max-w-124"
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       style={
@@ -95,6 +97,23 @@ export function CoreSystem() {
                 y: outerY,
               }
         }
+        initial={
+          shouldReduceMotion
+            ? false
+            : {
+                opacity: 0,
+                scale: 0.88,
+              }
+        }
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
+        transition={{
+          duration: shouldReduceMotion ? 0 : 0.9,
+          delay: shouldReduceMotion ? 0 : entranceTiming.core,
+          ease: entranceEase,
+        }}
       />
 
       {/* Middle layer */}
@@ -108,6 +127,23 @@ export function CoreSystem() {
                 y: middleY,
               }
         }
+        initial={
+          shouldReduceMotion
+            ? false
+            : {
+                opacity: 0,
+                scale: 0.82,
+              }
+        }
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
+        transition={{
+          duration: shouldReduceMotion ? 0 : 0.9,
+          delay: shouldReduceMotion ? 0 : entranceTiming.core + 0.1,
+          ease: entranceEase,
+        }}
       />
 
       {/* Inner layer */}
@@ -121,6 +157,23 @@ export function CoreSystem() {
                 y: innerY,
               }
         }
+        initial={
+          shouldReduceMotion
+            ? false
+            : {
+                opacity: 0,
+                scale: 0.72,
+              }
+        }
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
+        transition={{
+          duration: shouldReduceMotion ? 0 : 0.9,
+          delay: shouldReduceMotion ? 0 : entranceTiming.core + 0.2,
+          ease: entranceEase,
+        }}
       />
 
       {/* Node system */}
@@ -137,30 +190,119 @@ export function CoreSystem() {
               }
         }
       >
-        <path
+        {/* External node polygon */}
+        <motion.path
           d="M50 11L79 29L84 65L50 87L16 65L21 29L50 11Z"
           className="stroke-border-subtle"
           strokeWidth="0.3"
+          initial={
+            shouldReduceMotion
+              ? false
+              : {
+                  pathLength: 0,
+                  opacity: 0,
+                }
+          }
+          animate={{
+            pathLength: 1,
+            opacity: 1,
+          }}
+          transition={{
+            pathLength: {
+              duration: shouldReduceMotion ? 0 : 1.1,
+              delay: shouldReduceMotion ? 0 : entranceTiming.core + 0.18,
+              ease: entranceEase,
+            },
+            opacity: {
+              duration: shouldReduceMotion ? 0 : 0.3,
+              delay: shouldReduceMotion ? 0 : entranceTiming.core + 0.18,
+            },
+          }}
         />
 
-        <path
+        {/* Internal connections */}
+        <motion.path
           d="M50 11V87M21 29L84 65M79 29L16 65"
           className="stroke-border-subtle"
           strokeWidth="0.25"
+          initial={
+            shouldReduceMotion
+              ? false
+              : {
+                  pathLength: 0,
+                  opacity: 0,
+                }
+          }
+          animate={{
+            pathLength: 1,
+            opacity: 1,
+          }}
+          transition={{
+            pathLength: {
+              duration: shouldReduceMotion ? 0 : 1,
+              delay: shouldReduceMotion ? 0 : entranceTiming.core + 0.28,
+              ease: entranceEase,
+            },
+            opacity: {
+              duration: shouldReduceMotion ? 0 : 0.3,
+              delay: shouldReduceMotion ? 0 : entranceTiming.core + 0.28,
+            },
+          }}
         />
 
-        {nodes.map((node) => (
+        {/* Engineering domain nodes */}
+        {nodes.map((node, index) => (
           <g key={node.id}>
-            <circle cx={node.cx} cy={node.cy} r={node.r} className="fill-technical-300" />
+            <motion.circle
+              cx={node.cx}
+              cy={node.cy}
+              r={node.r}
+              className="fill-technical-300"
+              style={{
+                transformBox: "fill-box",
+                transformOrigin: "center",
+              }}
+              initial={
+                shouldReduceMotion
+                  ? false
+                  : {
+                      scale: 0,
+                      opacity: 0,
+                    }
+              }
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              transition={{
+                duration: shouldReduceMotion ? 0 : 0.45,
+                delay: shouldReduceMotion ? 0 : entranceTiming.core + 0.38 + index * 0.055,
+                ease: entranceEase,
+              }}
+            />
 
-            <text
+            <motion.text
               x={node.cx}
               y={node.cy - 3.5}
               textAnchor="middle"
               className="fill-technical-500 font-mono text-[2.2px] tracking-[0.12em]"
+              initial={
+                shouldReduceMotion
+                  ? false
+                  : {
+                      opacity: 0,
+                    }
+              }
+              animate={{
+                opacity: 1,
+              }}
+              transition={{
+                duration: shouldReduceMotion ? 0 : 0.35,
+                delay: shouldReduceMotion ? 0 : entranceTiming.core + 0.46 + index * 0.055,
+              }}
             >
               {node.label}
-            </text>
+            </motion.text>
           </g>
         ))}
       </motion.svg>
@@ -176,6 +318,23 @@ export function CoreSystem() {
                 y: coreY,
               }
         }
+        initial={
+          shouldReduceMotion
+            ? false
+            : {
+                opacity: 0,
+                scale: 0,
+              }
+        }
+        animate={{
+          opacity: 1,
+          scale: 1,
+        }}
+        transition={{
+          duration: shouldReduceMotion ? 0 : 0.65,
+          delay: shouldReduceMotion ? 0 : entranceTiming.core + 0.48,
+          ease: entranceEase,
+        }}
       >
         <div className="border-burgundy/60 absolute inset-0 rounded-full border" />
 
@@ -195,11 +354,28 @@ export function CoreSystem() {
                 y: coreY,
               }
         }
+        initial={
+          shouldReduceMotion
+            ? false
+            : {
+                opacity: 0,
+                y: 4,
+              }
+        }
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          duration: shouldReduceMotion ? 0 : 0.45,
+          delay: shouldReduceMotion ? 0 : entranceTiming.core + 0.65,
+          ease: entranceEase,
+        }}
       >
         System / 00
       </motion.span>
 
-      {/* Technical coordinates */}
+      {/* Technical coordinates — intentionally static */}
       <span className="text-technical-700 absolute top-[7%] left-1/2 -translate-x-1/2 font-mono text-[0.5rem] tracking-[0.16em] uppercase">
         Y / 00
       </span>
@@ -217,13 +393,47 @@ export function CoreSystem() {
       </span>
 
       {/* System status */}
-      <div className="absolute top-[12%] right-[12%] flex items-center gap-2">
-        <span className="bg-burgundy size-1.5 rounded-full" />
+      <motion.div
+        className="absolute top-[12%] right-[12%] flex items-center gap-2"
+        initial={
+          shouldReduceMotion
+            ? false
+            : {
+                opacity: 0,
+              }
+        }
+        animate={{
+          opacity: 1,
+        }}
+        transition={{
+          duration: shouldReduceMotion ? 0 : 0.5,
+          delay: shouldReduceMotion ? 0 : entranceTiming.core + 0.8,
+        }}
+      >
+        <motion.span
+          className="bg-burgundy size-1.5 rounded-full"
+          animate={
+            shouldReduceMotion
+              ? undefined
+              : {
+                  opacity: [0.4, 1, 0.4],
+                }
+          }
+          transition={
+            shouldReduceMotion
+              ? undefined
+              : {
+                  duration: 2.4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }
+          }
+        />
 
         <span className="text-technical-500 font-mono text-[0.5rem] tracking-[0.16em] uppercase">
           Active
         </span>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

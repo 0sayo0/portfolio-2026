@@ -1,12 +1,35 @@
+"use client";
+
 import Link from "next/link";
+import { motion, useReducedMotion } from "motion/react";
+
+import { entranceEase, entranceTiming } from "@/features/entrance/lib/entrance-motion";
 
 interface SiteHeaderProps {
   section?: string;
 }
 
 export function SiteHeader({ section = "00 / Entrance" }: SiteHeaderProps) {
+  const shouldReduceMotion = useReducedMotion();
+
+  const initialState = shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -12 };
+
+  const animateState = {
+    opacity: 1,
+    y: 0,
+  };
+
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-50">
+    <motion.header
+      className="pointer-events-none fixed inset-x-0 top-0 z-50"
+      initial={initialState}
+      animate={animateState}
+      transition={{
+        duration: shouldReduceMotion ? 0 : 0.7,
+        delay: shouldReduceMotion ? 0 : entranceTiming.navigation,
+        ease: entranceEase,
+      }}
+    >
       <div className="mx-auto grid w-full max-w-400 grid-cols-2 items-center px-6 py-6 md:grid-cols-3 md:px-10 md:py-8 lg:px-[clamp(3rem,4vw,4.5rem)]">
         <Link
           href="/"
@@ -37,6 +60,6 @@ export function SiteHeader({ section = "00 / Entrance" }: SiteHeaderProps) {
           />
         </Link>
       </div>
-    </header>
+    </motion.header>
   );
 }
