@@ -3,7 +3,7 @@ import { EntranceSection } from "@/features/entrance/components/entrance-section
 
 export default function HomePage() {
   return (
-    <main>
+    <main id="main-content">
       <SiteHeader />
       <EntranceSection />
     </main>

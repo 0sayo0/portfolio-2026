@@ -63,7 +63,7 @@ export function CoreSystem() {
 
   return (
     <motion.div
-      className="relative aspect-square w-full max-w-[20rem] sm:max-w-[24rem] md:max-w-[31rem]"
+      className="relative aspect-square w-full max-w-[20rem] sm:max-w-[24rem] md:max-w-124"
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       style={

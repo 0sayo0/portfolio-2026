@@ -51,11 +51,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-button,
-a {
-  color: inherit;
-}
-
 ::selection {
   background: var(--burgundy);
   color: var(--foreground);

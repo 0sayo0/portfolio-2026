@@ -8,7 +8,10 @@ export const metadata: Metadata = {
 
 export default function IndexPage() {
   return (
-    <main className="mx-auto min-h-dvh w-full max-w-[1600px] px-6 py-8 md:px-10 lg:px-[clamp(3rem,4vw,4.5rem)]">
+    <main
+      id="main-content"
+      className="mx-auto min-h-dvh w-full max-w-[1600px] px-6 py-8 md:px-10 lg:px-[clamp(3rem,4vw,4.5rem)]"
+    >
       <header className="border-border-subtle border-b pb-8">
         <p className="text-burgundy font-mono text-xs tracking-[0.18em] uppercase">Index / 00</p>
 
