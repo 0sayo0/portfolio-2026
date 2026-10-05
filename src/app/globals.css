@@ -1,1 +1,62 @@
 @import "tailwindcss";
+
+:root {
+  --background: #080808;
+  --foreground: #eceae5;
+
+  --burgundy: #6b1f30;
+
+  --technical-100: #d3d0ca;
+  --technical-300: #99958f;
+  --technical-500: #66625d;
+  --technical-700: #292725;
+  --technical-900: #111111;
+
+  --border-subtle: rgb(236 234 229 / 0.12);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-burgundy: var(--burgundy);
+
+  --color-technical-100: var(--technical-100);
+  --color-technical-300: var(--technical-300);
+  --color-technical-500: var(--technical-500);
+  --color-technical-700: var(--technical-700);
+  --color-technical-900: var(--technical-900);
+
+  --color-border-subtle: var(--border-subtle);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  min-height: 100dvh;
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--burgundy);
+  color: var(--foreground);
+}
