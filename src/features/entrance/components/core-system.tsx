@@ -47,7 +47,7 @@ export function CoreSystem() {
   const coreY = useTransform(springY, [-1, 1], [-6, 6]);
 
   function handlePointerMove(event: React.PointerEvent<HTMLDivElement>) {
-    if (shouldReduceMotion) return;
+    if (shouldReduceMotion || event.pointerType !== "mouse") return;
 
     const bounds = event.currentTarget.getBoundingClientRect();
 

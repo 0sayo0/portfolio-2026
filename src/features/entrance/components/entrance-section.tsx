@@ -41,8 +41,21 @@ export function EntranceSection() {
   const gridOpacity = useTransform(smoothProgress, [0, 0.5, 1], [1, 0.75, 0.35]);
 
   return (
-    <section ref={sectionRef} className="relative h-[180dvh]">
-      <div className="sticky top-0 min-h-dvh overflow-hidden">
+    <section
+      ref={sectionRef}
+      className={
+        shouldReduceMotion
+          ? "relative min-h-dvh"
+          : "relative h-[155dvh] sm:h-[165dvh] md:h-[180dvh]"
+      }
+    >
+      <div
+        className={
+          shouldReduceMotion
+            ? "relative min-h-dvh overflow-hidden"
+            : "sticky top-0 min-h-dvh overflow-hidden"
+        }
+      >
         {/* Structural grid */}
         <motion.div
           className="pointer-events-none absolute inset-0"
@@ -291,7 +304,7 @@ export function EntranceSection() {
             }
           >
             <motion.div
-              className="border-border-subtle grid gap-6 border-t pt-5 md:grid-cols-12 md:items-end"
+              className="border-border-subtle grid gap-4 border-t pt-5 md:grid-cols-12 md:items-end md:gap-6"
               initial={
                 shouldReduceMotion
                   ? false
