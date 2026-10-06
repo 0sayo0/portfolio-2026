@@ -1,5 +1,6 @@
 import type { EngineeringDomain } from "@/features/engineering/schemas/engineering-domain-schema";
 import type { KnowledgeNode } from "@/features/knowledge/schemas/knowledge-node-schema";
+import { KnowledgeGraph } from "@/features/knowledge/components/knowledge-graph";
 
 interface KnowledgeSectionProps {
   domains: EngineeringDomain[];
@@ -64,6 +65,8 @@ export function KnowledgeSection({ domains, nodes, stats }: KnowledgeSectionProp
             </p>
           </div>
         </div>
+
+        <KnowledgeGraph domains={domains} nodes={nodes} />
 
         {/* Knowledge clusters */}
         <div className="grid md:grid-cols-2 xl:grid-cols-3">
