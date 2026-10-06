@@ -16,6 +16,10 @@ const navigationSections = [
     id: "engineering",
     label: "01 / Engineering",
   },
+  {
+    id: "knowledge",
+    label: "02 / Knowledge",
+  },
 ] as const;
 
 type NavigationSectionId = (typeof navigationSections)[number]["id"];
