@@ -42,6 +42,7 @@ export function EntranceSection() {
 
   return (
     <section
+      id="entrance"
       ref={sectionRef}
       className={
         shouldReduceMotion
