@@ -1,20 +1,14 @@
 "use client";
 
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
+import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import { useReducedMotionPreference } from "@/hooks/use-reduced-motion-preference";
 
 import { entranceEase, entranceTiming } from "@/features/entrance/lib/entrance-motion";
 
-const nodes = [
-  { id: "frontend", cx: 50, cy: 11, r: 1.35, label: "FE" },
-  { id: "backend", cx: 79, cy: 29, r: 1.05, label: "BE" },
-  { id: "data", cx: 84, cy: 65, r: 1.2, label: "DA" },
-  { id: "quality", cx: 50, cy: 87, r: 1.45, label: "QA" },
-  { id: "delivery", cx: 16, cy: 65, r: 1.05, label: "DL" },
-  { id: "tooling", cx: 21, cy: 29, r: 1.15, label: "TL" },
-] as const;
+import { engineeringCoreNodes } from "@/features/engineering/content/engineering-core-nodes";
 
 export function CoreSystem() {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotionPreference();
 
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
@@ -251,7 +245,7 @@ export function CoreSystem() {
         />
 
         {/* Engineering domain nodes */}
-        {nodes.map((node, index) => (
+        {engineeringCoreNodes.map((node, index) => (
           <g key={node.id}>
             <motion.circle
               cx={node.cx}
@@ -285,7 +279,7 @@ export function CoreSystem() {
               x={node.cx}
               y={node.cy - 3.5}
               textAnchor="middle"
-              className="fill-technical-500 font-mono text-[2.2px] tracking-[0.12em]"
+              className="fill-technical-300 font-mono text-[2.8px] tracking-[0.12em] sm:text-[2.5px] md:text-[2.2px]"
               initial={
                 shouldReduceMotion
                   ? false
@@ -345,7 +339,7 @@ export function CoreSystem() {
 
       {/* Core identifier */}
       <motion.span
-        className="text-technical-500 absolute top-1/2 left-1/2 mt-8 -translate-x-1/2 font-mono text-[0.6rem] tracking-[0.18em] uppercase"
+        className="text-technical-300 absolute top-1/2 left-1/2 mt-8 -translate-x-1/2 font-mono text-[0.625rem] tracking-[0.18em] uppercase"
         style={
           shouldReduceMotion
             ? undefined
@@ -394,7 +388,7 @@ export function CoreSystem() {
 
       {/* System status */}
       <motion.div
-        className="absolute top-[12%] right-[12%] flex items-center gap-2"
+        className="absolute top-[9%] right-[10%] flex items-center gap-2"
         initial={
           shouldReduceMotion
             ? false
@@ -411,12 +405,12 @@ export function CoreSystem() {
         }}
       >
         <motion.span
-          className="bg-burgundy size-1.5 rounded-full"
+          className="bg-burgundy size-2 rounded-full"
           animate={
             shouldReduceMotion
               ? undefined
               : {
-                  opacity: [0.4, 1, 0.4],
+                  opacity: [0.3, 1, 0.3],
                 }
           }
           transition={
@@ -430,7 +424,7 @@ export function CoreSystem() {
           }
         />
 
-        <span className="text-technical-500 font-mono text-[0.5rem] tracking-[0.16em] uppercase">
+        <span className="text-technical-300 font-mono text-[0.625rem] tracking-[0.16em] uppercase sm:text-sm">
           Active
         </span>
       </motion.div>

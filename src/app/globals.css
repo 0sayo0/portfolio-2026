@@ -20,6 +20,7 @@
   --color-foreground: var(--foreground);
 
   --color-burgundy: var(--burgundy);
+  --color-burgundy-signal: #b85a70;
 
   --color-technical-100: var(--technical-100);
   --color-technical-300: var(--technical-300);
