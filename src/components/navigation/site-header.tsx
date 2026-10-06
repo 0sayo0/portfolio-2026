@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
+import { AnimatePresence, motion } from "motion/react";
 import { entranceEase, entranceTiming } from "@/features/entrance/lib/entrance-motion";
+import { useReducedMotionPreference } from "@/hooks/use-reduced-motion-preference";
 
 const navigationSections = [
   {
@@ -20,7 +21,7 @@ const navigationSections = [
 type NavigationSectionId = (typeof navigationSections)[number]["id"];
 
 export function SiteHeader() {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotionPreference();
 
   const [activeSectionId, setActiveSectionId] = useState<NavigationSectionId>("entrance");
 
@@ -95,14 +96,10 @@ export function SiteHeader() {
   return (
     <motion.header
       className="pointer-events-none fixed inset-x-0 top-0 z-50"
-      initial={
-        shouldReduceMotion
-          ? false
-          : {
-              opacity: 0,
-              y: -12,
-            }
-      }
+      initial={{
+        opacity: 0,
+        y: -12,
+      }}
       animate={{
         opacity: 1,
         y: 0,
@@ -137,14 +134,10 @@ export function SiteHeader() {
             <motion.span
               key={activeSection.id}
               className="block"
-              initial={
-                shouldReduceMotion
-                  ? false
-                  : {
-                      opacity: 0,
-                      y: 7,
-                    }
-              }
+              initial={{
+                opacity: 0,
+                y: 7,
+              }}
               animate={{
                 opacity: 1,
                 y: 0,

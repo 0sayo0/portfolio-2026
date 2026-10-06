@@ -1,6 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import { useReducedMotionPreference } from "@/hooks/use-reduced-motion-preference";
 
 import type { EngineeringDomain } from "@/features/engineering/schemas/engineering-domain-schema";
 
@@ -15,7 +16,7 @@ export function EngineeringDomainRecord({
   isActive,
   onToggle,
 }: EngineeringDomainRecordProps) {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotionPreference();
 
   const detailsId = `domain-${domain.id}-details`;
 
@@ -55,7 +56,7 @@ export function EngineeringDomainRecord({
 
           <span
             className={`font-mono text-xs tracking-[0.18em] transition-colors duration-300 ${
-              isActive ? "text-burgundy" : "text-technical-500"
+              isActive ? "text-burgundy-signal" : "text-technical-300"
             }`}
           >
             {domain.code}
@@ -84,7 +85,7 @@ export function EngineeringDomainRecord({
 
             <span
               aria-hidden="true"
-              className="text-technical-500 group-hover/button:text-burgundy group-focus-visible/button:text-burgundy mt-2 font-mono text-xs transition-colors"
+              className="text-technical-300 group-hover/button:text-burgundy-signal group-focus-visible/button:text-burgundy-signal mt-2 font-mono text-sm transition-colors"
             >
               {isActive ? "−" : "+"}
             </span>
@@ -104,7 +105,7 @@ export function EngineeringDomainRecord({
 
         {/* Capabilities preview */}
         <div className="md:col-span-3">
-          <p className="text-technical-500 mb-3 font-mono text-[0.5625rem] tracking-[0.16em] uppercase">
+          <p className="text-technical-300 mb-3 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
             Capabilities
           </p>
 
@@ -154,7 +155,7 @@ export function EngineeringDomainRecord({
           >
             <div className="border-border-subtle grid gap-10 border-t py-8 md:grid-cols-12 md:gap-6 md:py-10">
               <div className="md:col-span-3 md:col-start-3">
-                <p className="text-burgundy font-mono text-[0.5625rem] tracking-[0.16em] uppercase">
+                <p className="text-burgundy-signal font-mono text-xs tracking-[0.16em] uppercase">
                   Domain / {domain.code}
                 </p>
 
@@ -164,7 +165,7 @@ export function EngineeringDomainRecord({
               </div>
 
               <div className="md:col-span-3">
-                <p className="text-technical-500 mb-4 font-mono text-[0.5625rem] tracking-[0.16em] uppercase">
+                <p className="text-technical-300 mb-4 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
                   Full Capabilities
                 </p>
 
@@ -174,7 +175,7 @@ export function EngineeringDomainRecord({
                       key={capability}
                       className="text-technical-100 flex items-baseline gap-3 text-sm"
                     >
-                      <span className="text-technical-500 font-mono text-[0.5rem]">
+                      <span className="text-technical-500 font-mono text-[0.5625rem]">
                         {String(index + 1).padStart(2, "0")}
                       </span>
 
@@ -185,7 +186,7 @@ export function EngineeringDomainRecord({
               </div>
 
               <div className="md:col-span-4">
-                <p className="text-technical-500 mb-4 font-mono text-[0.5625rem] tracking-[0.16em] uppercase">
+                <p className="text-technical-300 mb-4 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
                   Technologies
                 </p>
 

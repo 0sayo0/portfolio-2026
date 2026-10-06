@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
+import { useReducedMotionPreference } from "@/hooks/use-reduced-motion-preference";
 
 import { EngineeringDomainRecord } from "@/features/engineering/components/engineering-domain-record";
 import type { EngineeringDomain } from "@/features/engineering/schemas/engineering-domain-schema";
@@ -11,7 +12,7 @@ interface EngineeringSectionProps {
 }
 
 export function EngineeringSection({ domains }: EngineeringSectionProps) {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotionPreference();
 
   const [activeDomainId, setActiveDomainId] = useState<EngineeringDomain["id"] | null>(
     domains[0]?.id ?? null,
@@ -56,7 +57,7 @@ export function EngineeringSection({ domains }: EngineeringSectionProps) {
         {/* Section heading */}
         <header className="border-border-subtle grid gap-10 border-b pb-16 md:grid-cols-12 md:items-end md:pb-20">
           <div className="md:col-span-4">
-            <p className="text-burgundy font-mono text-[0.6875rem] tracking-[0.18em] uppercase">
+            <p className="text-burgundy-signal font-mono text-sm tracking-[0.18em] uppercase">
               01 / Engineering
             </p>
           </div>
@@ -73,11 +74,11 @@ export function EngineeringSection({ domains }: EngineeringSectionProps) {
         {/* Core → Domain expansion */}
         <div className="border-border-subtle border-b py-10 md:py-12">
           <div className="flex items-end justify-between gap-6">
-            <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+            <p className="text-technical-300 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
               Core / Domain Expansion
             </p>
 
-            <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+            <p className="text-technical-300 font-mono text-sm tracking-[0.16em] uppercase">
               06 Domains
             </p>
           </div>
@@ -167,8 +168,8 @@ export function EngineeringSection({ domains }: EngineeringSectionProps) {
                       <span
                         className={`font-mono text-xs tracking-[0.18em] transition-colors duration-300 ${
                           isActive
-                            ? "text-burgundy"
-                            : "text-technical-300 group-hover:text-burgundy group-focus-visible:text-burgundy"
+                            ? "text-burgundy-signal"
+                            : "text-technical-300 group-hover:text-burgundy-signal group-focus-visible:text-burgundy-signal"
                         }`}
                       >
                         {domain.code}

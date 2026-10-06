@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
+import { motion, useScroll, useSpring, useTransform } from "motion/react";
+import { useReducedMotionPreference } from "@/hooks/use-reduced-motion-preference";
 
 import { CoreSystem } from "@/features/entrance/components/core-system";
 import { entranceEase, entranceTiming } from "@/features/entrance/lib/entrance-motion";
@@ -9,7 +10,7 @@ import { siteConfig } from "@/lib/site-config";
 
 export function EntranceSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotionPreference();
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -140,7 +141,7 @@ export function EntranceSection() {
             }
           >
             <motion.p
-              className="text-burgundy font-mono text-[0.6875rem] tracking-[0.18em] uppercase"
+              className="text-burgundy-signal font-mono text-sm tracking-[0.18em] uppercase"
               initial={
                 shouldReduceMotion
                   ? false
