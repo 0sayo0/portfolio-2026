@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import type { EngineeringDomain } from "@/features/engineering/schemas/engineering-domain-schema";
 import type { KnowledgeNode } from "@/features/knowledge/schemas/knowledge-node-schema";
@@ -10,6 +10,8 @@ interface KnowledgeGraphProps {
   domains: EngineeringDomain[];
   nodes: KnowledgeNode[];
 }
+
+type NavigationDirection = "left" | "right" | "up" | "down";
 
 function getNodeClassification(domainCount: number) {
   if (domainCount === 1) {
@@ -23,11 +25,83 @@ function getNodeClassification(domainCount: number) {
   return "Multi-domain";
 }
 
+function findDirectionalNode(
+  currentNodeId: string,
+  direction: NavigationDirection,
+  graphNodes: ReturnType<typeof createKnowledgeGraphLayout>["nodes"],
+) {
+  const currentNode = graphNodes.find((node) => node.id === currentNodeId);
+
+  if (!currentNode) {
+    return null;
+  }
+
+  const candidates = graphNodes.filter((node) => {
+    if (node.id === currentNode.id) {
+      return false;
+    }
+
+    switch (direction) {
+      case "left":
+        return node.x < currentNode.x;
+
+      case "right":
+        return node.x > currentNode.x;
+
+      case "up":
+        return node.y < currentNode.y;
+
+      case "down":
+        return node.y > currentNode.y;
+    }
+  });
+
+  if (candidates.length === 0) {
+    return null;
+  }
+
+  const directionalWeight = 1.8;
+
+  return candidates.reduce((closest, candidate) => {
+    const candidateDeltaX = candidate.x - currentNode.x;
+
+    const candidateDeltaY = candidate.y - currentNode.y;
+
+    const closestDeltaX = closest.x - currentNode.x;
+
+    const closestDeltaY = closest.y - currentNode.y;
+
+    function getScore(deltaX: number, deltaY: number) {
+      const horizontal = Math.abs(deltaX);
+      const vertical = Math.abs(deltaY);
+
+      switch (direction) {
+        case "left":
+        case "right":
+          return horizontal + vertical * directionalWeight;
+
+        case "up":
+        case "down":
+          return vertical + horizontal * directionalWeight;
+      }
+    }
+
+    return getScore(candidateDeltaX, candidateDeltaY) < getScore(closestDeltaX, closestDeltaY)
+      ? candidate
+      : closest;
+  });
+}
+
 export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
   const graph = useMemo(() => createKnowledgeGraphLayout(domains, nodes), [domains, nodes]);
 
   const [previewNodeId, setPreviewNodeId] = useState<string | null>(null);
+
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
+  const [focusNodeId, setFocusNodeId] = useState(graph.nodes[0]?.id ?? "");
+
+  const nodeButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const inspectedNodeId = selectedNodeId ?? previewNodeId;
 
@@ -39,8 +113,6 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
         .filter((domain): domain is EngineeringDomain => domain !== undefined)
     : [];
 
-  const crossDomainNodes = nodes.filter((node) => node.domains.length > 1);
-
   function handleNodeSelect(nodeId: string) {
     setSelectedNodeId((current) => (current === nodeId ? null : nodeId));
   }
@@ -48,6 +120,21 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
   function handleClearSelection() {
     setSelectedNodeId(null);
     setPreviewNodeId(null);
+  }
+
+  function focusNode(nodeId: string) {
+    setFocusNodeId(nodeId);
+    nodeButtonRefs.current.get(nodeId)?.focus();
+  }
+
+  function handleDirectionalNavigation(currentNodeId: string, direction: NavigationDirection) {
+    const targetNode = findDirectionalNode(currentNodeId, direction, graph.nodes);
+
+    if (!targetNode) {
+      return;
+    }
+
+    focusNode(targetNode.id);
   }
 
   return (
@@ -75,8 +162,15 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
         </p>
       </div>
 
-      {/* Desktop / tablet graph */}
-      <div className="mt-10 hidden md:block">
+      {/* Keyboard instructions */}
+      <p id="knowledge-graph-keyboard-help" className="sr-only">
+        Use the arrow keys to navigate between technology nodes. Press Enter or Space to lock a
+        selection. Press Escape to clear the current selection. Press Home or End to move to the
+        first or last node.
+      </p>
+
+      {/* Desktop graph */}
+      <div className="mt-10 hidden lg:block">
         <div className="relative">
           <svg
             viewBox={`0 0 ${graph.width} ${graph.height}`}
@@ -273,16 +367,81 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
                 <button
                   key={node.id}
                   type="button"
+                  ref={(element) => {
+                    if (element) {
+                      nodeButtonRefs.current.set(node.id, element);
+
+                      return;
+                    }
+
+                    nodeButtonRefs.current.delete(node.id);
+                  }}
+                  tabIndex={focusNodeId === node.id ? 0 : -1}
                   aria-label={`Inspect ${node.label}. Connected to ${relatedDomainNames}.`}
+                  aria-describedby="knowledge-graph-keyboard-help"
                   aria-pressed={isSelected}
                   onPointerEnter={() => setPreviewNodeId(node.id)}
                   onPointerLeave={() => setPreviewNodeId(null)}
-                  onFocus={() => setPreviewNodeId(node.id)}
+                  onFocus={() => {
+                    setFocusNodeId(node.id);
+                    setPreviewNodeId(node.id);
+                  }}
                   onBlur={() => setPreviewNodeId(null)}
                   onClick={() => handleNodeSelect(node.id)}
                   onKeyDown={(event) => {
-                    if (event.key === "Escape") {
-                      handleClearSelection();
+                    switch (event.key) {
+                      case "ArrowLeft":
+                        event.preventDefault();
+
+                        handleDirectionalNavigation(node.id, "left");
+
+                        break;
+
+                      case "ArrowRight":
+                        event.preventDefault();
+
+                        handleDirectionalNavigation(node.id, "right");
+
+                        break;
+
+                      case "ArrowUp":
+                        event.preventDefault();
+
+                        handleDirectionalNavigation(node.id, "up");
+
+                        break;
+
+                      case "ArrowDown":
+                        event.preventDefault();
+
+                        handleDirectionalNavigation(node.id, "down");
+
+                        break;
+
+                      case "Home":
+                        event.preventDefault();
+
+                        if (graph.nodes[0]) {
+                          focusNode(graph.nodes[0].id);
+                        }
+
+                        break;
+
+                      case "End": {
+                        event.preventDefault();
+
+                        const lastNode = graph.nodes[graph.nodes.length - 1];
+
+                        if (lastNode) {
+                          focusNode(lastNode.id);
+                        }
+
+                        break;
+                      }
+
+                      case "Escape":
+                        handleClearSelection();
+                        break;
                     }
                   }}
                   className={`pointer-events-auto absolute size-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent transition-shadow duration-200 outline-none motion-reduce:transition-none ${
@@ -303,8 +462,9 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
         </div>
       </div>
 
-      {/* Mobile relationship representation */}
-      <div className="mt-10 md:hidden">
+      {/* Compact tablet / mobile representation */}
+      <div className="mt-10 lg:hidden">
+        {/* Domain summary */}
         <div className="divide-border-subtle border-border-subtle divide-y border-y">
           {domains.map((domain) => {
             const domainNodes = nodes.filter((node) => node.domains.includes(domain.id));
@@ -334,49 +494,60 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
           })}
         </div>
 
-        {crossDomainNodes.length > 0 && (
-          <div className="mt-8">
+        {/* Complete knowledge node registry */}
+        <div className="mt-8">
+          <div className="flex items-end justify-between gap-6">
             <p className="text-technical-300 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
-              Cross-domain
+              Knowledge Nodes
             </p>
 
-            <div className="divide-border-subtle mt-4 divide-y">
-              {crossDomainNodes.map((node) => {
-                const relatedDomains = node.domains
-                  .map((domainId) => domains.find((domain) => domain.id === domainId)?.code)
-                  .filter(Boolean)
-                  .join(" ↔ ");
-
-                const isSelected = selectedNodeId === node.id;
-                const isInspected = inspectedNodeId === node.id;
-
-                return (
-                  <button
-                    key={node.id}
-                    type="button"
-                    aria-pressed={isSelected}
-                    onFocus={() => setPreviewNodeId(node.id)}
-                    onBlur={() => setPreviewNodeId(null)}
-                    onClick={() => handleNodeSelect(node.id)}
-                    className="focus-visible:ring-burgundy-signal focus-visible:ring-offset-background flex w-full items-center justify-between gap-6 py-3 text-left outline-none focus-visible:ring-1 focus-visible:ring-offset-2"
-                  >
-                    <span
-                      className={
-                        isInspected ? "text-foreground text-sm" : "text-technical-300 text-sm"
-                      }
-                    >
-                      {node.label}
-                    </span>
-
-                    <span className="text-burgundy-signal font-mono text-[0.625rem] tracking-[0.16em]">
-                      {relatedDomains}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+            <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+              {String(nodes.length).padStart(2, "0")} Total
+            </p>
           </div>
-        )}
+
+          <div className="divide-border-subtle border-border-subtle mt-4 divide-y border-y">
+            {nodes.map((node) => {
+              const relatedDomains = node.domains
+                .map((domainId) => domains.find((domain) => domain.id === domainId)?.code)
+                .filter(Boolean)
+                .join(" ↔ ");
+
+              const isSelected = selectedNodeId === node.id;
+
+              const isInspected = inspectedNodeId === node.id;
+
+              return (
+                <button
+                  key={node.id}
+                  type="button"
+                  aria-pressed={isSelected}
+                  aria-label={`Inspect ${node.label}. Connected domains: ${relatedDomains}.`}
+                  onFocus={() => setPreviewNodeId(node.id)}
+                  onBlur={() => setPreviewNodeId(null)}
+                  onClick={() => handleNodeSelect(node.id)}
+                  className="focus-visible:ring-burgundy-signal flex min-h-12 w-full items-center justify-between gap-6 py-3 text-left outline-none focus-visible:ring-1 focus-visible:ring-inset"
+                >
+                  <span
+                    className={
+                      isInspected ? "text-foreground text-sm" : "text-technical-300 text-sm"
+                    }
+                  >
+                    {node.label}
+                  </span>
+
+                  <span
+                    className={`shrink-0 font-mono text-[0.625rem] tracking-[0.16em] ${
+                      node.domains.length > 1 ? "text-burgundy-signal" : "text-technical-500"
+                    }`}
+                  >
+                    {relatedDomains}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Node inspector */}
