@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 
+import { EngineeringDomainRecord } from "@/features/engineering/components/engineering-domain-record";
 import type { EngineeringDomain } from "@/features/engineering/schemas/engineering-domain-schema";
 
 interface EngineeringSectionProps {
@@ -10,6 +12,43 @@ interface EngineeringSectionProps {
 
 export function EngineeringSection({ domains }: EngineeringSectionProps) {
   const shouldReduceMotion = useReducedMotion();
+
+  const [activeDomainId, setActiveDomainId] = useState<EngineeringDomain["id"] | null>(
+    domains[0]?.id ?? null,
+  );
+
+  const [pendingScrollDomainId, setPendingScrollDomainId] = useState<
+    EngineeringDomain["id"] | null
+  >(null);
+
+  function handleDomainToggle(domainId: EngineeringDomain["id"]) {
+    setActiveDomainId((current) => (current === domainId ? null : domainId));
+  }
+
+  function handleRailSelect(domainId: EngineeringDomain["id"]) {
+    setActiveDomainId(domainId);
+    setPendingScrollDomainId(domainId);
+  }
+
+  useEffect(() => {
+    if (!pendingScrollDomainId) return;
+
+    const timeoutId = window.setTimeout(
+      () => {
+        const domainElement = document.getElementById(`domain-${pendingScrollDomainId}`);
+
+        domainElement?.scrollIntoView({
+          behavior: shouldReduceMotion ? "auto" : "smooth",
+          block: "center",
+        });
+
+        setPendingScrollDomainId(null);
+      },
+      shouldReduceMotion ? 0 : 580,
+    );
+
+    return () => window.clearTimeout(timeoutId);
+  }, [pendingScrollDomainId, shouldReduceMotion]);
 
   return (
     <section id="engineering" className="border-border-subtle relative border-t">
@@ -68,115 +107,99 @@ export function EngineeringSection({ domains }: EngineeringSectionProps) {
             />
 
             <div className="grid grid-cols-3 gap-x-4 gap-y-8 sm:grid-cols-6">
-              {domains.map((domain, index) => (
-                <motion.div
-                  key={domain.id}
-                  className="relative"
-                  initial={
-                    shouldReduceMotion
-                      ? false
-                      : {
-                          opacity: 0,
-                          y: 10,
-                        }
-                  }
-                  whileInView={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  viewport={{
-                    once: true,
-                    amount: 0.6,
-                  }}
-                  transition={{
-                    duration: shouldReduceMotion ? 0 : 0.55,
-                    delay: shouldReduceMotion ? 0 : index * 0.06,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                >
-                  <span className="bg-burgundy relative z-10 mb-4 block size-2 rounded-full" />
+              {domains.map((domain, index) => {
+                const isActive = domain.id === activeDomainId;
 
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-technical-500 font-mono text-[0.5625rem] tracking-[0.16em]">
-                      {domain.index}
-                    </span>
+                return (
+                  <motion.button
+                    key={domain.id}
+                    type="button"
+                    onClick={() => handleRailSelect(domain.id)}
+                    aria-label={`Open ${domain.name} engineering domain`}
+                    aria-pressed={isActive}
+                    className="group relative text-left focus-visible:outline-none"
+                    initial={
+                      shouldReduceMotion
+                        ? false
+                        : {
+                            opacity: 0,
+                            y: 10,
+                          }
+                    }
+                    whileInView={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    viewport={{
+                      once: true,
+                      amount: 0.6,
+                    }}
+                    transition={{
+                      duration: shouldReduceMotion ? 0 : 0.55,
+                      delay: shouldReduceMotion ? 0 : index * 0.06,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                  >
+                    <motion.span
+                      aria-hidden="true"
+                      className={`relative z-10 mb-4 block rounded-full transition-colors duration-300 ${
+                        isActive
+                          ? "bg-burgundy size-2.5"
+                          : "bg-technical-500 group-hover:bg-burgundy group-focus-visible:bg-burgundy size-2"
+                      }`}
+                      animate={
+                        shouldReduceMotion
+                          ? undefined
+                          : {
+                              scale: isActive ? 1.15 : 1,
+                            }
+                      }
+                      transition={{
+                        duration: 0.25,
+                      }}
+                    />
 
-                    <span className="text-burgundy font-mono text-xs tracking-[0.18em]">
-                      {domain.code}
-                    </span>
-                  </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-technical-500 font-mono text-[0.5625rem] tracking-[0.16em]">
+                        {domain.index}
+                      </span>
 
-                  <p className="text-technical-100 mt-2 text-sm">{domain.name}</p>
-                </motion.div>
-              ))}
+                      <span
+                        className={`font-mono text-xs tracking-[0.18em] transition-colors duration-300 ${
+                          isActive
+                            ? "text-burgundy"
+                            : "text-technical-300 group-hover:text-burgundy group-focus-visible:text-burgundy"
+                        }`}
+                      >
+                        {domain.code}
+                      </span>
+                    </div>
+
+                    <p
+                      className={`mt-2 text-sm transition-colors duration-300 ${
+                        isActive
+                          ? "text-foreground"
+                          : "text-technical-300 group-hover:text-foreground group-focus-visible:text-foreground"
+                      }`}
+                    >
+                      {domain.name}
+                    </p>
+                  </motion.button>
+                );
+              })}
             </div>
           </div>
         </div>
 
         {/* Domain records */}
         <div className="divide-border-subtle divide-y">
-          {domains.map((domain, index) => (
-            <motion.article
+          {domains.map((domain) => (
+            <EngineeringDomainRecord
               key={domain.id}
-              className="grid gap-8 py-10 md:grid-cols-12 md:gap-6 md:py-14"
-              initial={
-                shouldReduceMotion
-                  ? false
-                  : {
-                      opacity: 0,
-                      y: 24,
-                    }
-              }
-              whileInView={{
-                opacity: 1,
-                y: 0,
-              }}
-              viewport={{
-                once: true,
-                amount: 0.25,
-              }}
-              transition={{
-                duration: shouldReduceMotion ? 0 : 0.7,
-                delay: shouldReduceMotion ? 0 : index * 0.035,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-            >
-              <div className="flex items-start gap-5 md:col-span-2">
-                <span className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em]">
-                  {domain.index}
-                </span>
-
-                <span className="text-burgundy font-mono text-xs tracking-[0.18em]">
-                  {domain.code}
-                </span>
-              </div>
-
-              <div className="md:col-span-3">
-                <h3 className="font-display text-4xl tracking-[-0.035em] md:text-5xl">
-                  {domain.name}
-                </h3>
-              </div>
-
-              <div className="md:col-span-4">
-                <p className="text-technical-300 max-w-xl text-sm leading-7 md:text-base">
-                  {domain.statement}
-                </p>
-              </div>
-
-              <div className="md:col-span-3">
-                <p className="text-technical-500 mb-3 font-mono text-[0.5625rem] tracking-[0.16em] uppercase">
-                  Capabilities
-                </p>
-
-                <ul className="space-y-1.5">
-                  {domain.capabilities.slice(0, 4).map((capability) => (
-                    <li key={capability} className="text-technical-100 text-sm">
-                      {capability}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </motion.article>
+              domain={domain}
+              isActive={domain.id === activeDomainId}
+              onToggle={() => handleDomainToggle(domain.id)}
+            />
           ))}
         </div>
       </div>
