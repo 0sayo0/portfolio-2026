@@ -117,7 +117,7 @@ export function EngineeringSection({ domains }: EngineeringSectionProps) {
                     onClick={() => handleRailSelect(domain.id)}
                     aria-label={`Open ${domain.name} engineering domain`}
                     aria-pressed={isActive}
-                    className="group relative text-left focus-visible:outline-none"
+                    className="group focus-visible:ring-burgundy/70 focus-visible:ring-offset-background relative rounded-sm text-left focus-visible:ring-1 focus-visible:ring-offset-4 focus-visible:outline-none"
                     initial={
                       shouldReduceMotion
                         ? false

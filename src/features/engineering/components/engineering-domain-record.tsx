@@ -19,6 +19,8 @@ export function EngineeringDomainRecord({
 
   const detailsId = `domain-${domain.id}-details`;
 
+  const titleId = `domain-${domain.id}-title`;
+
   return (
     <motion.article
       id={`domain-${domain.id}`}
@@ -67,9 +69,10 @@ export function EngineeringDomainRecord({
             onClick={onToggle}
             aria-expanded={isActive}
             aria-controls={detailsId}
-            className="group/button flex w-full items-start justify-between gap-4 text-left focus-visible:outline-none"
+            className="group/button focus-visible:ring-burgundy/70 focus-visible:ring-offset-background flex w-full items-start justify-between gap-4 rounded-sm text-left focus-visible:ring-1 focus-visible:ring-offset-4 focus-visible:outline-none"
           >
             <h3
+              id={titleId}
               className={`font-display text-4xl tracking-[-0.035em] transition-colors duration-300 md:text-5xl ${
                 isActive
                   ? "text-foreground"
@@ -120,6 +123,8 @@ export function EngineeringDomainRecord({
         {isActive && (
           <motion.div
             id={detailsId}
+            role="region"
+            aria-labelledby={titleId}
             key={domain.id}
             initial={
               shouldReduceMotion
