@@ -1,6 +1,6 @@
 import type { EngineeringDomain } from "@/features/engineering/schemas/engineering-domain-schema";
-import type { KnowledgeNode } from "@/features/knowledge/schemas/knowledge-node-schema";
 import { KnowledgeGraph } from "@/features/knowledge/components/knowledge-graph";
+import type { KnowledgeNode } from "@/features/knowledge/schemas/knowledge-node-schema";
 
 interface KnowledgeSectionProps {
   domains: EngineeringDomain[];
@@ -16,8 +16,35 @@ export function KnowledgeSection({ domains, nodes, stats }: KnowledgeSectionProp
   return (
     <section id="knowledge" className="border-border-subtle relative border-t">
       <div className="mx-auto w-full max-w-400 px-6 py-24 md:px-10 md:py-32 lg:px-[clamp(3rem,4vw,4.5rem)]">
+        {/* Engineering → Knowledge handoff */}
+        <div className="border-border-subtle grid gap-5 border-b pb-8 sm:grid-cols-[1fr_auto_1fr] sm:items-center md:pb-10">
+          <div>
+            <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+              01 / Engineering
+            </p>
+
+            <p className="text-technical-300 mt-2 text-sm">Domains define the system.</p>
+          </div>
+
+          <div aria-hidden="true" className="hidden items-center gap-3 sm:flex">
+            <span className="bg-border-subtle h-px w-12 md:w-20" />
+
+            <span className="text-burgundy-signal font-mono text-[0.625rem]">→</span>
+
+            <span className="bg-border-subtle h-px w-12 md:w-20" />
+          </div>
+
+          <div className="sm:text-right">
+            <p className="text-burgundy-signal font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+              02 / Knowledge
+            </p>
+
+            <p className="text-technical-100 mt-2 text-sm">Relationships reveal the knowledge.</p>
+          </div>
+        </div>
+
         {/* Section heading */}
-        <header className="border-border-subtle grid gap-10 border-b pb-16 md:grid-cols-12 md:items-end md:pb-20">
+        <header className="border-border-subtle grid gap-10 border-b py-16 md:grid-cols-12 md:items-end md:py-20">
           <div className="md:col-span-4">
             <p className="text-burgundy-signal font-mono text-xs tracking-[0.18em] uppercase">
               02 / Knowledge
@@ -66,6 +93,7 @@ export function KnowledgeSection({ domains, nodes, stats }: KnowledgeSectionProp
           </div>
         </div>
 
+        {/* Relationship graph */}
         <KnowledgeGraph domains={domains} nodes={nodes} />
 
         {/* Knowledge clusters */}
