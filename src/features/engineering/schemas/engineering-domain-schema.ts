@@ -1,9 +1,20 @@
 import { z } from "zod";
 
+export const engineeringDomainIdSchema = z.enum([
+  "frontend",
+  "backend",
+  "data",
+  "quality",
+  "delivery",
+  "tooling",
+]);
+
+export const engineeringDomainCodeSchema = z.enum(["FE", "BE", "DA", "QA", "DL", "TL"]);
+
 export const engineeringDomainSchema = z.object({
-  id: z.string().min(1),
+  id: engineeringDomainIdSchema,
   index: z.string().regex(/^\d{2}$/),
-  code: z.string().min(2).max(3),
+  code: engineeringDomainCodeSchema,
   name: z.string().min(1),
   statement: z.string().min(1),
   capabilities: z.array(z.string().min(1)).min(1),

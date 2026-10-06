@@ -4,14 +4,7 @@ import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } fro
 
 import { entranceEase, entranceTiming } from "@/features/entrance/lib/entrance-motion";
 
-const nodes = [
-  { id: "frontend", cx: 50, cy: 11, r: 1.35, label: "FE" },
-  { id: "backend", cx: 79, cy: 29, r: 1.05, label: "BE" },
-  { id: "data", cx: 84, cy: 65, r: 1.2, label: "DA" },
-  { id: "quality", cx: 50, cy: 87, r: 1.45, label: "QA" },
-  { id: "delivery", cx: 16, cy: 65, r: 1.05, label: "DL" },
-  { id: "tooling", cx: 21, cy: 29, r: 1.15, label: "TL" },
-] as const;
+import { engineeringCoreNodes } from "@/features/engineering/content/engineering-core-nodes";
 
 export function CoreSystem() {
   const shouldReduceMotion = useReducedMotion();
@@ -251,7 +244,7 @@ export function CoreSystem() {
         />
 
         {/* Engineering domain nodes */}
-        {nodes.map((node, index) => (
+        {engineeringCoreNodes.map((node, index) => (
           <g key={node.id}>
             <motion.circle
               cx={node.cx}
