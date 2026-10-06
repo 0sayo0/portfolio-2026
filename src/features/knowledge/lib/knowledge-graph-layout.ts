@@ -21,6 +21,12 @@ const graphCenter: Point = {
   y: graphHeight / 2,
 };
 
+const coordinatePrecision = 1000;
+
+function roundCoordinate(value: number) {
+  return Math.round(value * coordinatePrecision) / coordinatePrecision;
+}
+
 const domainGeometry = {
   frontend: {
     x: 190,
@@ -351,7 +357,11 @@ export function createKnowledgeGraphLayout(
 
   const crossDomainPoints = positionCrossDomainNodes(nodes);
 
-  const knowledgePoints = [...singleDomainPoints, ...crossDomainPoints];
+  const knowledgePoints = [...singleDomainPoints, ...crossDomainPoints].map((node) => ({
+    ...node,
+    x: roundCoordinate(node.x),
+    y: roundCoordinate(node.y),
+  }));
 
   const edges: KnowledgeGraphEdge[] = [];
 

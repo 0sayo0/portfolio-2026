@@ -1,3 +1,7 @@
+"use client";
+
+import { useMemo, useState } from "react";
+
 import type { EngineeringDomain } from "@/features/engineering/schemas/engineering-domain-schema";
 import type { KnowledgeNode } from "@/features/knowledge/schemas/knowledge-node-schema";
 import { createKnowledgeGraphLayout } from "@/features/knowledge/lib/knowledge-graph-layout";
@@ -7,16 +11,51 @@ interface KnowledgeGraphProps {
   nodes: KnowledgeNode[];
 }
 
+function getNodeClassification(domainCount: number) {
+  if (domainCount === 1) {
+    return "Single-domain";
+  }
+
+  if (domainCount === 2) {
+    return "Cross-domain";
+  }
+
+  return "Multi-domain";
+}
+
 export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
-  const graph = createKnowledgeGraphLayout(domains, nodes);
+  const graph = useMemo(() => createKnowledgeGraphLayout(domains, nodes), [domains, nodes]);
+
+  const [previewNodeId, setPreviewNodeId] = useState<string | null>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
+  const inspectedNodeId = selectedNodeId ?? previewNodeId;
+
+  const inspectedNode = nodes.find((node) => node.id === inspectedNodeId) ?? null;
+
+  const inspectedDomains = inspectedNode
+    ? inspectedNode.domains
+        .map((domainId) => domains.find((domain) => domain.id === domainId))
+        .filter((domain): domain is EngineeringDomain => domain !== undefined)
+    : [];
 
   const crossDomainNodes = nodes.filter((node) => node.domains.length > 1);
+
+  function handleNodeSelect(nodeId: string) {
+    setSelectedNodeId((current) => (current === nodeId ? null : nodeId));
+  }
+
+  function handleClearSelection() {
+    setSelectedNodeId(null);
+    setPreviewNodeId(null);
+  }
 
   return (
     <section
       aria-labelledby="knowledge-topology-title"
       className="border-border-subtle border-b py-10 md:py-14"
     >
+      {/* Heading */}
       <div className="flex items-end justify-between gap-6">
         <div>
           <p className="text-technical-300 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
@@ -38,124 +77,230 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
 
       {/* Desktop / tablet graph */}
       <div className="mt-10 hidden md:block">
-        <svg
-          viewBox={`0 0 ${graph.width} ${graph.height}`}
-          role="img"
-          aria-labelledby="knowledge-graph-svg-title knowledge-graph-svg-description"
-          className="h-auto w-full overflow-visible"
-        >
-          <title id="knowledge-graph-svg-title">Engineering knowledge relationship graph</title>
+        <div className="relative">
+          <svg
+            viewBox={`0 0 ${graph.width} ${graph.height}`}
+            role="img"
+            aria-labelledby="knowledge-graph-svg-title knowledge-graph-svg-description"
+            className="h-auto w-full overflow-visible"
+          >
+            <title id="knowledge-graph-svg-title">Engineering knowledge relationship graph</title>
 
-          <desc id="knowledge-graph-svg-description">
-            Engineering domains connected to the technologies associated with each domain.
-            Technologies shared by multiple domains appear near the center of the graph.
-          </desc>
+            <desc id="knowledge-graph-svg-description">
+              Engineering domains connected to their associated technologies. Shared technologies
+              appear between the domains they connect.
+            </desc>
 
-          {/* Structural guides */}
+            {/* Structural guide */}
+            <line
+              x1="0"
+              y1={graph.height / 2}
+              x2={graph.width}
+              y2={graph.height / 2}
+              className="stroke-border-subtle"
+              strokeWidth="1"
+            />
 
-          <line
-            x1="0"
-            y1={graph.height / 2}
-            x2={graph.width}
-            y2={graph.height / 2}
-            className="stroke-border-subtle"
-            strokeWidth="1"
-          />
+            {/* Relationships */}
+            <g aria-hidden="true">
+              {graph.edges.map((edge) => {
+                const isInspectedEdge =
+                  inspectedNodeId !== null && edge.id.endsWith(`-${inspectedNodeId}`);
 
-          {/* Relationships */}
-          <g aria-hidden="true">
-            {graph.edges.map((edge) => (
-              <line
-                key={edge.id}
-                x1={edge.x1}
-                y1={edge.y1}
-                x2={edge.x2}
-                y2={edge.y2}
-                className={
-                  edge.isCrossDomain ? "stroke-burgundy-signal/32" : "stroke-border-subtle"
-                }
-                strokeWidth={edge.isCrossDomain ? 1 : 0.9}
-              />
-            ))}
-          </g>
+                const hasInspection = inspectedNodeId !== null;
 
-          {/* Knowledge nodes */}
-          {graph.nodes.map((node) => {
-            const textAnchor =
-              node.isCrossDomain || node.anchorX === undefined
-                ? "middle"
-                : node.x < node.anchorX - 12
-                  ? "end"
-                  : node.x > node.anchorX + 12
-                    ? "start"
-                    : "middle";
-
-            const labelX =
-              textAnchor === "start" ? node.x + 8 : textAnchor === "end" ? node.x - 8 : node.x;
-
-            const labelY = textAnchor === "middle" ? node.y - 10 : node.y + 4;
-
-            return (
-              <g key={node.id}>
-                <circle
-                  cx={node.x}
-                  cy={node.y}
-                  r={node.isCrossDomain ? 5 : 3}
-                  className={node.isCrossDomain ? "fill-burgundy-signal" : "fill-technical-500"}
-                />
-
-                <text
-                  x={labelX}
-                  y={labelY}
-                  textAnchor={textAnchor}
-                  paintOrder="stroke"
-                  strokeWidth={3}
-                  strokeLinejoin="round"
-                  className={
-                    node.isCrossDomain
-                      ? "fill-foreground stroke-background font-sans text-[11px]"
-                      : "fill-technical-300 stroke-background font-sans text-[10px]"
-                  }
-                >
-                  {node.label}
-                </text>
-              </g>
-            );
-          })}
-
-          {/* Domain anchors */}
-          {graph.domains.map((domain) => (
-            <g key={domain.id}>
-              <circle
-                cx={domain.x}
-                cy={domain.y}
-                r="20"
-                className="fill-background stroke-burgundy-signal"
-                strokeWidth="1.25"
-              />
-
-              <circle cx={domain.x} cy={domain.y} r="4" className="fill-burgundy" />
-
-              <text
-                x={domain.x}
-                y={domain.y - 30}
-                textAnchor="middle"
-                className="fill-burgundy-signal font-mono text-[11px] tracking-[0.18em]"
-              >
-                {domain.code}
-              </text>
-
-              <text
-                x={domain.x}
-                y={domain.y + 39}
-                textAnchor="middle"
-                className="fill-technical-100 font-sans text-[12px]"
-              >
-                {domain.name}
-              </text>
+                return (
+                  <line
+                    key={edge.id}
+                    x1={edge.x1}
+                    y1={edge.y1}
+                    x2={edge.x2}
+                    y2={edge.y2}
+                    opacity={!hasInspection ? 1 : isInspectedEdge ? 1 : 0.1}
+                    className={`transition-opacity duration-200 motion-reduce:transition-none ${
+                      isInspectedEdge
+                        ? "stroke-burgundy-signal"
+                        : edge.isCrossDomain
+                          ? "stroke-burgundy-signal/32"
+                          : "stroke-border-subtle"
+                    }`}
+                    strokeWidth={isInspectedEdge ? 1.8 : edge.isCrossDomain ? 1 : 0.9}
+                  />
+                );
+              })}
             </g>
-          ))}
-        </svg>
+
+            {/* Knowledge nodes */}
+            <g aria-hidden="true">
+              {graph.nodes.map((node) => {
+                const isInspected = node.id === inspectedNodeId;
+
+                const sharesInspectedDomain =
+                  inspectedNode !== null &&
+                  node.domains.some((domainId) => inspectedNode.domains.includes(domainId));
+
+                const hasInspection = inspectedNode !== null;
+
+                const nodeOpacity = !hasInspection
+                  ? 1
+                  : isInspected
+                    ? 1
+                    : sharesInspectedDomain
+                      ? 0.42
+                      : 0.12;
+
+                const textAnchor =
+                  node.isCrossDomain || node.anchorX === undefined
+                    ? "middle"
+                    : node.x < node.anchorX - 12
+                      ? "end"
+                      : node.x > node.anchorX + 12
+                        ? "start"
+                        : "middle";
+
+                const labelX =
+                  textAnchor === "start" ? node.x + 8 : textAnchor === "end" ? node.x - 8 : node.x;
+
+                const labelY = textAnchor === "middle" ? node.y - 10 : node.y + 4;
+
+                return (
+                  <g
+                    key={node.id}
+                    opacity={nodeOpacity}
+                    className="transition-opacity duration-200 motion-reduce:transition-none"
+                  >
+                    <circle
+                      cx={node.x}
+                      cy={node.y}
+                      r={isInspected ? 6 : node.isCrossDomain ? 5 : 3}
+                      className={
+                        isInspected || node.isCrossDomain
+                          ? "fill-burgundy-signal"
+                          : "fill-technical-500"
+                      }
+                    />
+
+                    <text
+                      x={labelX}
+                      y={labelY}
+                      textAnchor={textAnchor}
+                      paintOrder="stroke"
+                      strokeWidth={3}
+                      strokeLinejoin="round"
+                      className={
+                        isInspected
+                          ? "fill-foreground stroke-background font-sans text-[12px]"
+                          : node.isCrossDomain
+                            ? "fill-foreground stroke-background font-sans text-[11px]"
+                            : "fill-technical-300 stroke-background font-sans text-[10px]"
+                      }
+                    >
+                      {node.label}
+                    </text>
+                  </g>
+                );
+              })}
+            </g>
+
+            {/* Domain anchors */}
+            <g aria-hidden="true">
+              {graph.domains.map((domain) => {
+                const isConnected = inspectedNode?.domains.includes(domain.id) ?? false;
+
+                const hasInspection = inspectedNode !== null;
+
+                const domainOpacity = !hasInspection ? 1 : isConnected ? 1 : 0.2;
+
+                return (
+                  <g
+                    key={domain.id}
+                    opacity={domainOpacity}
+                    className="transition-opacity duration-200 motion-reduce:transition-none"
+                  >
+                    <circle
+                      cx={domain.x}
+                      cy={domain.y}
+                      r="20"
+                      className={
+                        isConnected
+                          ? "fill-background stroke-burgundy-signal"
+                          : "fill-background stroke-burgundy-signal/70"
+                      }
+                      strokeWidth={isConnected ? 1.75 : 1.25}
+                    />
+
+                    <circle
+                      cx={domain.x}
+                      cy={domain.y}
+                      r={isConnected ? 5 : 4}
+                      className="fill-burgundy"
+                    />
+
+                    <text
+                      x={domain.x}
+                      y={domain.y - 30}
+                      textAnchor="middle"
+                      className="fill-burgundy-signal font-mono text-[11px] tracking-[0.18em]"
+                    >
+                      {domain.code}
+                    </text>
+
+                    <text
+                      x={domain.x}
+                      y={domain.y + 39}
+                      textAnchor="middle"
+                      className="fill-technical-100 font-sans text-[12px]"
+                    >
+                      {domain.name}
+                    </text>
+                  </g>
+                );
+              })}
+            </g>
+          </svg>
+
+          {/* Accessible interactive layer */}
+          <div className="pointer-events-none absolute inset-0">
+            {graph.nodes.map((node) => {
+              const relatedDomainNames = node.domains
+                .map((domainId) => domains.find((domain) => domain.id === domainId)?.name)
+                .filter(Boolean)
+                .join(", ");
+
+              const isSelected = node.id === selectedNodeId;
+
+              return (
+                <button
+                  key={node.id}
+                  type="button"
+                  aria-label={`Inspect ${node.label}. Connected to ${relatedDomainNames}.`}
+                  aria-pressed={isSelected}
+                  onPointerEnter={() => setPreviewNodeId(node.id)}
+                  onPointerLeave={() => setPreviewNodeId(null)}
+                  onFocus={() => setPreviewNodeId(node.id)}
+                  onBlur={() => setPreviewNodeId(null)}
+                  onClick={() => handleNodeSelect(node.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Escape") {
+                      handleClearSelection();
+                    }
+                  }}
+                  className={`pointer-events-auto absolute size-8 -translate-x-1/2 -translate-y-1/2 rounded-full bg-transparent transition-shadow duration-200 outline-none motion-reduce:transition-none ${
+                    isSelected
+                      ? "ring-burgundy-signal/70 ring-offset-background ring-1 ring-offset-2"
+                      : "focus-visible:ring-burgundy-signal focus-visible:ring-offset-background focus-visible:ring-1 focus-visible:ring-offset-2"
+                  }`}
+                  style={{
+                    left: `${(node.x / graph.width) * 100}%`,
+                    top: `${(node.y / graph.height) * 100}%`,
+                  }}
+                >
+                  <span className="sr-only">{node.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Mobile relationship representation */}
@@ -164,8 +309,15 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
           {domains.map((domain) => {
             const domainNodes = nodes.filter((node) => node.domains.includes(domain.id));
 
+            const isConnected = inspectedNode?.domains.includes(domain.id) ?? false;
+
             return (
-              <div key={domain.id} className="flex items-center justify-between gap-6 py-4">
+              <div
+                key={domain.id}
+                className={`flex items-center justify-between gap-6 py-4 transition-opacity duration-200 motion-reduce:transition-none ${
+                  inspectedNode && !isConnected ? "opacity-35" : ""
+                }`}
+              >
                 <div className="flex items-baseline gap-3">
                   <span className="text-burgundy-signal font-mono text-xs tracking-[0.18em]">
                     {domain.code}
@@ -188,26 +340,121 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
               Cross-domain
             </p>
 
-            <div className="mt-4 space-y-3">
+            <div className="divide-border-subtle mt-4 divide-y">
               {crossDomainNodes.map((node) => {
                 const relatedDomains = node.domains
                   .map((domainId) => domains.find((domain) => domain.id === domainId)?.code)
                   .filter(Boolean)
                   .join(" ↔ ");
 
+                const isSelected = selectedNodeId === node.id;
+                const isInspected = inspectedNodeId === node.id;
+
                 return (
-                  <div key={node.id} className="flex items-center justify-between gap-6">
-                    <span className="text-foreground text-sm">{node.label}</span>
+                  <button
+                    key={node.id}
+                    type="button"
+                    aria-pressed={isSelected}
+                    onFocus={() => setPreviewNodeId(node.id)}
+                    onBlur={() => setPreviewNodeId(null)}
+                    onClick={() => handleNodeSelect(node.id)}
+                    className="focus-visible:ring-burgundy-signal focus-visible:ring-offset-background flex w-full items-center justify-between gap-6 py-3 text-left outline-none focus-visible:ring-1 focus-visible:ring-offset-2"
+                  >
+                    <span
+                      className={
+                        isInspected ? "text-foreground text-sm" : "text-technical-300 text-sm"
+                      }
+                    >
+                      {node.label}
+                    </span>
 
                     <span className="text-burgundy-signal font-mono text-[0.625rem] tracking-[0.16em]">
                       {relatedDomains}
                     </span>
-                  </div>
+                  </button>
                 );
               })}
             </div>
           </div>
         )}
+      </div>
+
+      {/* Node inspector */}
+      <div className="border-border-subtle min-h-44 border-y">
+        <div className="grid gap-8 py-8 md:grid-cols-12 md:gap-6">
+          <div className="md:col-span-3">
+            <p className="text-technical-300 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+              Node Inspection
+            </p>
+
+            <p className="text-burgundy-signal mt-2 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+              {selectedNodeId ? "Selection locked" : inspectedNode ? "Preview" : "Standby"}
+            </p>
+          </div>
+
+          {inspectedNode ? (
+            <>
+              <div className="md:col-span-3">
+                <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+                  Knowledge Node
+                </p>
+
+                <h4 className="font-display mt-3 text-2xl tracking-[-0.035em]">
+                  {inspectedNode.label}
+                </h4>
+
+                <p className="text-technical-300 mt-3 text-sm">
+                  {getNodeClassification(inspectedNode.domains.length)}
+                </p>
+              </div>
+
+              <div className="md:col-span-3">
+                <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+                  Connected Domains
+                </p>
+
+                <div className="mt-4 space-y-2">
+                  {inspectedDomains.map((domain) => (
+                    <div key={domain.id} className="flex items-baseline gap-3">
+                      <span className="text-burgundy-signal font-mono text-xs tracking-[0.18em]">
+                        {domain.code}
+                      </span>
+
+                      <span className="text-technical-100 text-sm">{domain.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="md:col-span-3">
+                <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+                  Relationships
+                </p>
+
+                <p className="text-technical-100 mt-3 font-mono text-xl">
+                  {String(inspectedNode.domains.length).padStart(2, "0")}
+                </p>
+
+                {selectedNodeId && (
+                  <button
+                    type="button"
+                    onClick={handleClearSelection}
+                    className="border-burgundy-signal/60 text-burgundy-signal hover:text-foreground focus-visible:text-foreground mt-6 border-b pb-1 font-mono text-[0.625rem] tracking-[0.16em] uppercase transition-colors duration-200 outline-none motion-reduce:transition-none"
+                  >
+                    Clear selection
+                  </button>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="md:col-span-9">
+              <p className="text-technical-300 max-w-xl text-sm leading-7">
+                Hover or focus a technology node to preview its relationships. Select a node to keep
+                its engineering context visible.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
