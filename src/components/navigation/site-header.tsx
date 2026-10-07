@@ -85,7 +85,7 @@ export function SiteHeader() {
       }
     }
 
-    resolveInitialSection();
+    const initialFrame = requestAnimationFrame(resolveInitialSection);
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -109,6 +109,7 @@ export function SiteHeader() {
     });
 
     return () => {
+      cancelAnimationFrame(initialFrame);
       observer.disconnect();
     };
   }, []);

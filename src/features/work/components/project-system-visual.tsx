@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import type { PointerEvent } from "react";
+import { useRef, type PointerEvent } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 
 import type { Project } from "@/features/work/schemas/project-schema";
@@ -432,6 +432,7 @@ function SystemFallback({ kind }: SystemFallbackProps) {
 
 export function ProjectSystemVisual({ project }: ProjectSystemVisualProps) {
   const shouldReduceMotion = useReducedMotion();
+  const boundsRef = useRef<DOMRect | null>(null);
 
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
@@ -461,11 +462,11 @@ export function ProjectSystemVisual({ project }: ProjectSystemVisualProps) {
   const foregroundY = useTransform(springY, [-1, 1], [-3, 3]);
 
   function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
-    if (shouldReduceMotion || event.pointerType === "touch") {
+    if (shouldReduceMotion || event.pointerType === "touch" || !boundsRef.current) {
       return;
     }
 
-    const bounds = event.currentTarget.getBoundingClientRect();
+    const bounds = boundsRef.current;
 
     const x = (event.clientX - bounds.left) / bounds.width;
 
@@ -476,12 +477,23 @@ export function ProjectSystemVisual({ project }: ProjectSystemVisualProps) {
   }
 
   function handlePointerLeave() {
+    boundsRef.current = null;
+
     pointerX.set(0);
     pointerY.set(0);
   }
 
+  function handlePointerEnter(event: PointerEvent<HTMLDivElement>) {
+    if (shouldReduceMotion || event.pointerType === "touch") {
+      return;
+    }
+
+    boundsRef.current = event.currentTarget.getBoundingClientRect();
+  }
+
   return (
     <motion.div
+      onPointerEnter={handlePointerEnter}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       style={{

@@ -492,23 +492,20 @@ export function ProjectCaseStudy({
                   </a>
                 )}
 
-                {project.links.repository && (
+                {project.links.repositories.map((repository) => (
                   <a
-                    href={project.links.repository}
+                    key={repository.url}
+                    href={repository.url}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label={
-                      project.status === "in-progress"
-                        ? `View ${project.name} development repository in a new tab`
-                        : `Open ${project.name} source repository in a new tab`
-                    }
+                    aria-label={`Open ${project.name} ${repository.label} repository in a new tab`}
                     className="border-border-subtle text-technical-300 hover:text-foreground inline-flex items-center gap-3 border-b pb-2 font-mono text-[0.625rem] tracking-[0.16em] uppercase transition-colors"
                   >
-                    {project.status === "in-progress" ? "View development" : "Source"}
+                    {project.status === "in-progress" ? "View development" : repository.label}
 
                     <span className="text-burgundy-signal">↗</span>
                   </a>
-                )}
+                ))}
 
                 <Link
                   href="/#work"

@@ -73,7 +73,13 @@ const projectsData = [
 
     links: {
       live: null,
-      repository: null,
+
+      repositories: [
+        {
+          label: "Development",
+          url: "https://github.com/0sayo0/flowboard",
+        },
+      ],
     },
   },
   {
@@ -132,8 +138,14 @@ const projectsData = [
     },
 
     links: {
-      live: "https://stephanymanzano.com",
-      repository: null,
+      live: "https://stephanymanzano.com/",
+
+      repositories: [
+        {
+          label: "Source",
+          url: "https://github.com/0sayo0/smhc-web",
+        },
+      ],
     },
   },
   {
@@ -199,8 +211,14 @@ const projectsData = [
     },
 
     links: {
-      live: null,
-      repository: null,
+      live: "https://aeris-rouge-eight.vercel.app/",
+
+      repositories: [
+        {
+          label: "Source",
+          url: "https://github.com/0sayo0/Aeris",
+        },
+      ],
     },
   },
 
@@ -274,7 +292,17 @@ const projectsData = [
 
     links: {
       live: null,
-      repository: null,
+
+      repositories: [
+        {
+          label: "Frontend",
+          url: "https://github.com/0sayo0/usercrud-frontend",
+        },
+        {
+          label: "Backend",
+          url: "https://github.com/0sayo0/usercrud-backend",
+        },
+      ],
     },
   },
   {
@@ -322,8 +350,14 @@ const projectsData = [
     },
 
     links: {
-      live: null,
-      repository: null,
+      live: "https://dogtoranimalistic.netlify.app/",
+
+      repositories: [
+        {
+          label: "Source",
+          url: "https://github.com/0sayo0/citas_react_vite",
+        },
+      ],
     },
   },
 ] as const;

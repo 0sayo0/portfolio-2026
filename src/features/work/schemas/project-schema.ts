@@ -45,7 +45,13 @@ export const projectSchema = z.object({
 
   links: z.object({
     live: z.url().nullable(),
-    repository: z.url().nullable(),
+
+    repositories: z.array(
+      z.object({
+        label: z.string().min(1),
+        url: z.url(),
+      }),
+    ),
   }),
 });
 
