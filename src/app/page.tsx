@@ -13,6 +13,8 @@ import { ExperienceSection } from "@/features/experience/components/experience-s
 import { experiences } from "@/features/experience/content/experiences";
 import { AboutSection } from "@/features/about/components/about-section";
 import { aboutProfile } from "@/features/about/content/about-profile";
+import { ContactSection } from "@/features/contact/components/contact-section";
+import { contactProfile } from "@/features/contact/content/contact-profile";
 
 export default function HomePage() {
   return (
@@ -42,6 +44,8 @@ export default function HomePage() {
       />
 
       <AboutSection profile={aboutProfile} />
+
+      <ContactSection profile={contactProfile} />
     </main>
   );
 }
