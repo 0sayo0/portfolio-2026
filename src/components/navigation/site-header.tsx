@@ -183,7 +183,7 @@ export function SiteHeader() {
 
         {/* Index */}
         <Link
-          href="/index"
+          href="/professional-index"
           className="group text-technical-300 hover:text-foreground focus-visible:text-foreground pointer-events-auto relative justify-self-end font-mono text-xs tracking-[0.18em] uppercase transition-colors duration-300"
         >
           <span>Index</span>
