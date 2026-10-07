@@ -11,6 +11,8 @@ import { WorkSection } from "@/features/work/components/work-section";
 import { projects } from "@/features/work/content/projects";
 import { ExperienceSection } from "@/features/experience/components/experience-section";
 import { experiences } from "@/features/experience/content/experiences";
+import { AboutSection } from "@/features/about/components/about-section";
+import { aboutProfile } from "@/features/about/content/about-profile";
 
 export default function HomePage() {
   return (
@@ -38,6 +40,8 @@ export default function HomePage() {
         experiences={experiences}
         knowledgeNodes={knowledgeNodes}
       />
+
+      <AboutSection profile={aboutProfile} />
     </main>
   );
 }
