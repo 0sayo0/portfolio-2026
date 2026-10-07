@@ -147,3 +147,7 @@ const projectsData = [
 ] as const;
 
 export const projects = projectsSchema.parse(projectsData);
+
+export function getProjectBySlug(slug: string) {
+  return projects.find((project) => project.slug === slug) ?? null;
+}
