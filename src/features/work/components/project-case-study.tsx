@@ -484,6 +484,7 @@ export function ProjectCaseStudy({
                     href={project.links.live}
                     target="_blank"
                     rel="noreferrer"
+                    aria-label={`Open ${project.name} live product in a new tab`}
                     className="border-burgundy-signal/60 hover:border-foreground focus-visible:border-foreground inline-flex items-center gap-3 border-b pb-2 font-mono text-[0.625rem] tracking-[0.16em] uppercase transition-colors"
                   >
                     Live product
@@ -496,6 +497,11 @@ export function ProjectCaseStudy({
                     href={project.links.repository}
                     target="_blank"
                     rel="noreferrer"
+                    aria-label={
+                      project.status === "in-progress"
+                        ? `View ${project.name} development repository in a new tab`
+                        : `Open ${project.name} source repository in a new tab`
+                    }
                     className="border-border-subtle text-technical-300 hover:text-foreground inline-flex items-center gap-3 border-b pb-2 font-mono text-[0.625rem] tracking-[0.16em] uppercase transition-colors"
                   >
                     {project.status === "in-progress" ? "View development" : "Source"}

@@ -224,6 +224,7 @@ export function ProjectSystemRecord({
               href={project.links.live}
               target="_blank"
               rel="noreferrer"
+              aria-label={`Open ${project.name} live product in a new tab`}
               className="group/link border-border-subtle text-technical-300 hover:text-foreground focus-visible:text-foreground inline-flex items-center gap-3 border-b pb-2 font-mono text-[0.625rem] tracking-[0.16em] uppercase transition-colors duration-200 outline-none motion-reduce:transition-none"
             >
               Live product
@@ -238,6 +239,11 @@ export function ProjectSystemRecord({
               href={project.links.repository}
               target="_blank"
               rel="noreferrer"
+              aria-label={
+                project.status === "in-progress"
+                  ? `View ${project.name} development repository in a new tab`
+                  : `Open ${project.name} source repository in a new tab`
+              }
               className="group/link border-border-subtle text-technical-300 hover:text-foreground focus-visible:text-foreground inline-flex items-center gap-3 border-b pb-2 font-mono text-[0.625rem] tracking-[0.16em] uppercase transition-colors duration-200 outline-none motion-reduce:transition-none"
             >
               {project.status === "in-progress" ? "View development" : "Source"}
