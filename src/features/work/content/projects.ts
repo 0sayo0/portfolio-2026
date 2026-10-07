@@ -23,19 +23,25 @@ const projectsData = [
 
     domains: ["frontend", "data", "quality", "delivery", "tooling"],
 
-    technologies: [
-      "React",
-      "TypeScript",
-      "Vite",
-      "Tailwind CSS",
-      "shadcn/ui",
-      "TanStack Query",
-      "React Hook Form",
-      "Zod",
-      "Vitest",
-      "React Testing Library",
-      "GitHub",
-      "Vercel",
+    knowledgeNodeIds: [
+      "react",
+      "typescript",
+      "vite",
+      "tailwind-css",
+      "shadcn-ui",
+      "tanstack-query",
+      "react-hook-form",
+      "zod",
+      "vitest",
+      "react-testing-library",
+      "eslint",
+      "prettier",
+      "husky",
+      "lint-staged",
+      "git",
+      "github",
+      "vercel",
+      "lighthouse",
     ],
 
     highlights: [
@@ -45,6 +51,17 @@ const projectsData = [
       "Covered critical behavior with Vitest and React Testing Library",
       "Completed production deployment and quality verification",
     ],
+
+    architecture: {
+      label: "External data pipeline",
+      flow: ["Search", "Geocoding", "Validation", "Adapter", "Query", "Interface"],
+    },
+
+    preview: {
+      kind: "weather-system",
+      src: null,
+      alt: "Aeris Weather App interface preview",
+    },
 
     links: {
       live: null,
@@ -74,32 +91,33 @@ const projectsData = [
 
     domains: ["frontend", "backend", "data", "quality", "delivery", "tooling"],
 
-    technologies: [
-      "React",
-      "TypeScript",
-      "Vite",
-      "React Router",
-      "TanStack Query",
-      "Zustand",
-      "React Hook Form",
-      "Zod",
-      "Tailwind CSS",
-      "shadcn/ui",
-      "Motion / Framer Motion",
-      "Node.js",
-      "Express",
-      "MongoDB",
-      "Mongoose",
-      "JWT",
-      "Vitest",
-      "React Testing Library",
-      "GitHub Actions",
-      "Git",
-      "GitHub",
+    knowledgeNodeIds: [
+      "react",
+      "typescript",
+      "vite",
+      "react-router",
+      "tanstack-query",
+      "zustand",
+      "react-hook-form",
+      "zod",
+      "tailwind-css",
+      "shadcn-ui",
+      "motion-framer-motion",
+      "node-js",
+      "express",
+      "mongodb",
+      "mongoose",
+      "jwt",
+      "vitest",
+      "react-testing-library",
+      "eslint",
+      "prettier",
+      "github-actions",
+      "git",
+      "github",
       "npm",
-      "Husky",
+      "husky",
       "lint-staged",
-      "Prettier",
     ],
 
     highlights: [
@@ -109,6 +127,17 @@ const projectsData = [
       "Introduces full-stack authentication and persistence architecture",
       "Uses automated quality gates and repository tooling from the beginning",
     ],
+
+    architecture: {
+      label: "Client → API → persistence",
+      flow: ["React Client", "Router", "REST API", "Express", "Auth", "MongoDB"],
+    },
+
+    preview: {
+      kind: "workspace-system",
+      src: null,
+      alt: "FlowBoard workspace interface preview",
+    },
 
     links: {
       live: null,
