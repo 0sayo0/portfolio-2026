@@ -4,6 +4,7 @@ import type { EngineeringDomain } from "@/features/engineering/schemas/engineeri
 import { ProjectSystemVisual } from "@/features/work/components/project-system-visual";
 import type { Project } from "@/features/work/schemas/project-schema";
 import type { ProjectKnowledgeRecord } from "@/features/work/lib/project-knowledge";
+import { WorkReveal } from "@/features/work/components/work-reveal";
 
 interface ProjectSystemRecordProps {
   domains: EngineeringDomain[];
@@ -31,7 +32,7 @@ export function ProjectSystemRecord({
   return (
     <article className="border-border-subtle border-b py-16 md:py-24">
       {/* Record header */}
-      <div className="grid gap-8 md:grid-cols-12 md:items-end">
+      <WorkReveal className="grid gap-8 md:grid-cols-12 md:items-end">
         <div className="md:col-span-2">
           <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
             Project / {project.index}
@@ -59,15 +60,15 @@ export function ProjectSystemRecord({
         <div className="md:col-span-3 md:text-right">
           <p className="text-technical-300 text-sm leading-7">{project.tagline}</p>
         </div>
-      </div>
+      </WorkReveal>
 
       {/* Main system composition */}
       <div className="mt-12 grid gap-10 lg:grid-cols-12 lg:gap-12">
-        <div className={reverse ? "lg:order-2 lg:col-span-7" : "lg:col-span-7"}>
+        <WorkReveal className={reverse ? "lg:order-2 lg:col-span-7" : "lg:col-span-7"}>
           <ProjectSystemVisual project={project} />
-        </div>
+        </WorkReveal>
 
-        <div className={reverse ? "lg:order-1 lg:col-span-5" : "lg:col-span-5"}>
+        <WorkReveal className={reverse ? "lg:order-1 lg:col-span-5" : "lg:col-span-5"}>
           {/* Engineering fingerprint */}
           <div>
             <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
@@ -177,11 +178,14 @@ export function ProjectSystemRecord({
               </span>
             </div>
           </div>
-        </div>
+        </WorkReveal>
       </div>
 
       {/* Engineering signals */}
-      <div className="border-border-subtle mt-12 grid gap-8 border-t pt-10 md:grid-cols-12">
+      <WorkReveal
+        amount={0.2}
+        className="border-border-subtle mt-12 grid gap-8 border-t pt-10 md:grid-cols-12"
+      >
         <div className="md:col-span-2">
           <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
             Engineering signals
@@ -244,7 +248,7 @@ export function ProjectSystemRecord({
             </a>
           )}
         </div>
-      </div>
+      </WorkReveal>
     </article>
   );
 }

@@ -5,6 +5,8 @@ import type { ProjectKnowledgeRecord } from "@/features/work/lib/project-knowled
 import { ProjectSystemVisual } from "@/features/work/components/project-system-visual";
 import type { ProjectCaseStudy } from "@/features/work/schemas/project-case-study-schema";
 import type { Project } from "@/features/work/schemas/project-schema";
+import { CaseStudyLine } from "@/features/work/components/case-study-line";
+import { CaseStudyReveal } from "@/features/work/components/case-study-reveal";
 
 interface ProjectCaseStudyProps {
   project: Project;
@@ -53,7 +55,7 @@ export function ProjectCaseStudy({
       <div className="mx-auto w-full max-w-400 px-6 md:px-10 lg:px-[clamp(3rem,4vw,4.5rem)]">
         {/* Hero */}
         <section className="border-border-subtle border-b py-16 md:py-24">
-          <div className="grid gap-12 lg:grid-cols-12 lg:items-end">
+          <CaseStudyReveal amount={0.4} className="grid gap-12 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-8">
               <div className="flex items-center gap-4">
                 <p className="text-burgundy-signal font-mono text-xs tracking-[0.18em] uppercase">
@@ -87,86 +89,90 @@ export function ProjectCaseStudy({
                 {project.summary}
               </p>
             </div>
-          </div>
+          </CaseStudyReveal>
 
-          <div className="mt-16">
+          <CaseStudyReveal delay={0.1} amount={0.12} distance={28} className="mt-16">
             <ProjectSystemVisual project={project} />
-          </div>
+          </CaseStudyReveal>
         </section>
 
         {/* System metadata */}
-        <section className="border-border-subtle grid gap-8 border-b py-8 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
-              Status
-            </p>
+        <section className="border-border-subtle border-b py-8">
+          <CaseStudyReveal amount={0.5} className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+                Status
+              </p>
 
-            <p className="text-technical-100 mt-2 text-sm">{getStatusLabel(project.status)}</p>
-          </div>
+              <p className="text-technical-100 mt-2 text-sm">{getStatusLabel(project.status)}</p>
+            </div>
 
-          <div>
-            <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
-              Domains
-            </p>
+            <div>
+              <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+                Domains
+              </p>
 
-            <p className="text-technical-100 mt-2 font-mono text-sm">
-              {String(projectDomains.length).padStart(2, "0")}
-            </p>
-          </div>
+              <p className="text-technical-100 mt-2 font-mono text-sm">
+                {String(projectDomains.length).padStart(2, "0")}
+              </p>
+            </div>
 
-          <div>
-            <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
-              Knowledge Nodes
-            </p>
+            <div>
+              <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+                Knowledge Nodes
+              </p>
 
-            <p className="text-technical-100 mt-2 font-mono text-sm">
-              {String(knowledge.nodes.length).padStart(2, "0")}
-            </p>
-          </div>
+              <p className="text-technical-100 mt-2 font-mono text-sm">
+                {String(knowledge.nodes.length).padStart(2, "0")}
+              </p>
+            </div>
 
-          <div>
-            <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
-              Cross-domain
-            </p>
+            <div>
+              <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+                Cross-domain
+              </p>
 
-            <p className="text-burgundy-signal mt-2 font-mono text-sm">
-              {String(knowledge.crossDomainNodes.length).padStart(2, "0")}
-            </p>
-          </div>
+              <p className="text-burgundy-signal mt-2 font-mono text-sm">
+                {String(knowledge.crossDomainNodes.length).padStart(2, "0")}
+              </p>
+            </div>
+          </CaseStudyReveal>
         </section>
 
         {/* 01 — Context */}
-        <section className="border-border-subtle grid gap-10 border-b py-20 md:grid-cols-12 md:py-28">
-          <div className="md:col-span-3">
-            <p className="text-burgundy-signal font-mono text-xs tracking-[0.18em] uppercase">
-              01 / System Context
-            </p>
-          </div>
+        <section className="border-border-subtle border-b py-20 md:py-28">
+          <CaseStudyReveal amount={0.2} className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-3">
+              <p className="text-burgundy-signal font-mono text-xs tracking-[0.18em] uppercase">
+                01 / System Context
+              </p>
+            </div>
 
-          <div className="md:col-span-7 md:col-start-5">
-            <h2 className="font-display text-5xl leading-[0.9] tracking-[-0.045em] md:text-7xl">
-              Why this
-              <br />
-              system exists.
-            </h2>
+            <div className="md:col-span-7 md:col-start-5">
+              <h2 className="font-display text-5xl leading-[0.9] tracking-[-0.045em] md:text-7xl">
+                Why this
+                <br />
+                system exists.
+              </h2>
 
-            <p className="text-technical-300 mt-10 text-base leading-8 md:text-lg">
-              {caseStudy.context}
-            </p>
-
-            <div className="border-border-subtle mt-10 border-l pl-6">
-              <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
-                Problem
+              <p className="text-technical-300 mt-10 text-base leading-8 md:text-lg">
+                {caseStudy.context}
               </p>
 
-              <p className="text-technical-100 mt-3 text-sm leading-7">{project.problem}</p>
+              <div className="border-border-subtle mt-10 border-l pl-6">
+                <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
+                  Problem
+                </p>
+
+                <p className="text-technical-100 mt-3 text-sm leading-7">{project.problem}</p>
+              </div>
             </div>
-          </div>
+          </CaseStudyReveal>
         </section>
 
         {/* 02 — Architecture */}
         <section className="border-border-subtle border-b py-20 md:py-28">
-          <div className="grid gap-12 md:grid-cols-12">
+          <CaseStudyReveal amount={0.25} className="grid gap-12 md:grid-cols-12">
             <div className="md:col-span-3">
               <p className="text-burgundy-signal font-mono text-xs tracking-[0.18em] uppercase">
                 02 / Architecture
@@ -184,29 +190,32 @@ export function ProjectCaseStudy({
                 {caseStudy.architectureSummary}
               </p>
             </div>
-          </div>
+          </CaseStudyReveal>
 
           <div className="border-border-subtle mt-16 border-y">
             {project.architecture.flow.map((step, index) => (
-              <div
-                key={step}
-                className="border-border-subtle grid gap-4 border-b py-5 last:border-b-0 sm:grid-cols-[5rem_1fr_auto] sm:items-center"
-              >
-                <span className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
+              <CaseStudyReveal key={step} delay={index * 0.045} amount={0.35}>
+                <div className="grid gap-4 py-5 sm:grid-cols-[5rem_1fr_auto] sm:items-center">
+                  <span className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em]">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
 
-                <span className="text-technical-100 text-sm">{step}</span>
+                  <span className="text-technical-100 text-sm">{step}</span>
+
+                  {index < project.architecture.flow.length - 1 && (
+                    <span
+                      aria-hidden="true"
+                      className="text-burgundy-signal hidden font-mono text-xs sm:block"
+                    >
+                      ↓
+                    </span>
+                  )}
+                </div>
 
                 {index < project.architecture.flow.length - 1 && (
-                  <span
-                    aria-hidden="true"
-                    className="text-burgundy-signal hidden font-mono text-xs sm:block"
-                  >
-                    ↓
-                  </span>
+                  <CaseStudyLine delay={index * 0.045} />
                 )}
-              </div>
+              </CaseStudyReveal>
             ))}
           </div>
         </section>
@@ -231,18 +240,20 @@ export function ProjectCaseStudy({
 
           <div className="mt-16 grid md:grid-cols-2 xl:grid-cols-3">
             {caseStudy.runtimeFlow.map((step, index) => (
-              <article
-                key={step.label}
-                className="border-border-subtle border-b py-8 md:border-r md:px-8 xl:nth-[3n]:border-r-0"
-              >
-                <span className="text-burgundy-signal font-mono text-[0.625rem] tracking-[0.16em]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
+              <CaseStudyReveal key={step.label} delay={(index % 3) * 0.06} amount={0.25}>
+                <article
+                  key={step.label}
+                  className="border-border-subtle border-b py-8 md:border-r md:px-8 xl:nth-[3n]:border-r-0"
+                >
+                  <span className="text-burgundy-signal font-mono text-[0.625rem] tracking-[0.16em]">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
 
-                <h3 className="font-display mt-6 text-3xl tracking-[-0.035em]">{step.label}</h3>
+                  <h3 className="font-display mt-6 text-3xl tracking-[-0.035em]">{step.label}</h3>
 
-                <p className="text-technical-300 mt-5 text-sm leading-7">{step.description}</p>
-              </article>
+                  <p className="text-technical-300 mt-5 text-sm leading-7">{step.description}</p>
+                </article>
+              </CaseStudyReveal>
             ))}
           </div>
         </section>
@@ -267,31 +278,33 @@ export function ProjectCaseStudy({
 
           <div className="mt-16">
             {caseStudy.decisions.map((decision, index) => (
-              <article
-                key={decision.title}
-                className="border-border-subtle grid gap-6 border-t py-8 md:grid-cols-12"
-              >
-                <div className="md:col-span-2">
-                  <span className="text-burgundy-signal font-mono text-xs">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                </div>
+              <CaseStudyReveal key={decision.title} amount={0.3}>
+                <article
+                  key={decision.title}
+                  className="border-border-subtle grid gap-6 border-t py-8 md:grid-cols-12"
+                >
+                  <div className="md:col-span-2">
+                    <span className="text-burgundy-signal font-mono text-xs">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </div>
 
-                <div className="md:col-span-4">
-                  <h3 className="font-display text-3xl tracking-[-0.035em]">{decision.title}</h3>
-                </div>
+                  <div className="md:col-span-4">
+                    <h3 className="font-display text-3xl tracking-[-0.035em]">{decision.title}</h3>
+                  </div>
 
-                <div className="md:col-span-5 md:col-start-8">
-                  <p className="text-technical-300 text-sm leading-7">{decision.rationale}</p>
-                </div>
-              </article>
+                  <div className="md:col-span-5 md:col-start-8">
+                    <p className="text-technical-300 text-sm leading-7">{decision.rationale}</p>
+                  </div>
+                </article>
+              </CaseStudyReveal>
             ))}
           </div>
         </section>
 
         {/* 05 — Knowledge Evidence */}
         <section className="border-border-subtle border-b py-20 md:py-28">
-          <div className="grid gap-12 md:grid-cols-12">
+          <CaseStudyReveal amount={0.25} className="grid gap-12 md:grid-cols-12">
             <div className="md:col-span-3">
               <p className="text-burgundy-signal font-mono text-xs tracking-[0.18em] uppercase">
                 05 / Knowledge Evidence
@@ -305,9 +318,9 @@ export function ProjectCaseStudy({
                 applied.
               </h2>
             </div>
-          </div>
+          </CaseStudyReveal>
 
-          <div className="mt-16 grid gap-12 lg:grid-cols-12">
+          <CaseStudyReveal delay={0.08} amount={0.2} className="mt-16 grid gap-12 lg:grid-cols-12">
             <div className="lg:col-span-4">
               <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
                 Engineering Domains
@@ -377,12 +390,12 @@ export function ProjectCaseStudy({
                 ))}
               </div>
             </div>
-          </div>
+          </CaseStudyReveal>
         </section>
 
         {/* 06 — Quality */}
         <section className="border-border-subtle border-b py-20 md:py-28">
-          <div className="grid gap-12 md:grid-cols-12">
+          <CaseStudyReveal amount={0.25} className="grid gap-12 md:grid-cols-12">
             <div className="md:col-span-3">
               <p className="text-burgundy-signal font-mono text-xs tracking-[0.18em] uppercase">
                 06 / Quality
@@ -400,9 +413,13 @@ export function ProjectCaseStudy({
                 {caseStudy.quality.summary}
               </p>
             </div>
-          </div>
+          </CaseStudyReveal>
 
-          <div className="bg-border-subtle mt-16 grid gap-px sm:grid-cols-2 lg:grid-cols-4">
+          <CaseStudyReveal
+            delay={0.08}
+            amount={0.25}
+            className="bg-border-subtle mt-16 grid gap-px sm:grid-cols-2 lg:grid-cols-4"
+          >
             {caseStudy.quality.metrics.map((metric) => (
               <div key={metric.label} className="bg-background p-6">
                 <p className="text-technical-500 font-mono text-[0.625rem] tracking-[0.16em] uppercase">
@@ -412,9 +429,13 @@ export function ProjectCaseStudy({
                 <p className="font-display mt-5 text-3xl tracking-[-0.035em]">{metric.value}</p>
               </div>
             ))}
-          </div>
+          </CaseStudyReveal>
 
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <CaseStudyReveal
+            delay={0.12}
+            amount={0.2}
+            className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {caseStudy.quality.signals.map((signal, index) => (
               <div key={signal} className="border-border-subtle border-t pt-4">
                 <span className="text-burgundy-signal font-mono text-[0.625rem]">
@@ -424,12 +445,12 @@ export function ProjectCaseStudy({
                 <p className="text-technical-300 mt-3 text-sm leading-6">{signal}</p>
               </div>
             ))}
-          </div>
+          </CaseStudyReveal>
         </section>
 
         {/* 07 — Outcome */}
         <section className="py-20 md:py-28">
-          <div className="grid gap-12 md:grid-cols-12">
+          <CaseStudyReveal amount={0.25} className="grid gap-12 md:grid-cols-12">
             <div className="md:col-span-3">
               <p className="text-burgundy-signal font-mono text-xs tracking-[0.18em] uppercase">
                 07 / Outcome
@@ -492,7 +513,7 @@ export function ProjectCaseStudy({
                 </Link>
               </div>
             </div>
-          </div>
+          </CaseStudyReveal>
         </section>
       </div>
     </main>

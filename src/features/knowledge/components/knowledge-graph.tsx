@@ -2,6 +2,8 @@
 
 import { useMemo, useRef, useState } from "react";
 
+import { motion, useReducedMotion } from "motion/react";
+
 import type { EngineeringDomain } from "@/features/engineering/schemas/engineering-domain-schema";
 import type { KnowledgeNode } from "@/features/knowledge/schemas/knowledge-node-schema";
 import { createKnowledgeGraphLayout } from "@/features/knowledge/lib/knowledge-graph-layout";
@@ -12,6 +14,8 @@ interface KnowledgeGraphProps {
 }
 
 type NavigationDirection = "left" | "right" | "up" | "down";
+
+const graphMotionEase = [0.22, 1, 0.36, 1] as const;
 
 function getNodeClassification(domainCount: number) {
   if (domainCount === 1) {
@@ -94,6 +98,8 @@ function findDirectionalNode(
 
 export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
   const graph = useMemo(() => createKnowledgeGraphLayout(domains, nodes), [domains, nodes]);
+
+  const shouldReduceMotion = useReducedMotion();
 
   const [previewNodeId, setPreviewNodeId] = useState<string | null>(null);
 
@@ -186,17 +192,48 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
             </desc>
 
             {/* Structural guide */}
-            <line
+            <motion.line
               x1="0"
               y1={graph.height / 2}
               x2={graph.width}
               y2={graph.height / 2}
               className="stroke-border-subtle"
               strokeWidth="1"
+              initial={{
+                opacity: 0,
+              }}
+              whileInView={{
+                opacity: 1,
+              }}
+              viewport={{
+                once: true,
+                amount: 0.5,
+              }}
+              transition={{
+                duration: shouldReduceMotion ? 0 : 0.5,
+                ease: graphMotionEase,
+              }}
             />
 
             {/* Relationships */}
-            <g aria-hidden="true">
+            <motion.g
+              aria-hidden="true"
+              initial={{
+                opacity: 0,
+              }}
+              whileInView={{
+                opacity: 1,
+              }}
+              viewport={{
+                once: true,
+                amount: 0.35,
+              }}
+              transition={{
+                duration: shouldReduceMotion ? 0 : 0.75,
+                delay: shouldReduceMotion ? 0 : 0.16,
+                ease: graphMotionEase,
+              }}
+            >
               {graph.edges.map((edge) => {
                 const isInspectedEdge =
                   inspectedNodeId !== null && edge.id.endsWith(`-${inspectedNodeId}`);
@@ -211,7 +248,7 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
                     x2={edge.x2}
                     y2={edge.y2}
                     opacity={!hasInspection ? 1 : isInspectedEdge ? 1 : 0.1}
-                    className={`transition-opacity duration-200 motion-reduce:transition-none ${
+                    className={`transition-opacity duration-300 motion-reduce:transition-none ${
                       isInspectedEdge
                         ? "stroke-burgundy-signal"
                         : edge.isCrossDomain
@@ -222,10 +259,27 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
                   />
                 );
               })}
-            </g>
+            </motion.g>
 
             {/* Knowledge nodes */}
-            <g aria-hidden="true">
+            <motion.g
+              aria-hidden="true"
+              initial={{
+                opacity: 0,
+              }}
+              whileInView={{
+                opacity: 1,
+              }}
+              viewport={{
+                once: true,
+                amount: 0.35,
+              }}
+              transition={{
+                duration: shouldReduceMotion ? 0 : 0.75,
+                delay: shouldReduceMotion ? 0 : 0.26,
+                ease: graphMotionEase,
+              }}
+            >
               {graph.nodes.map((node) => {
                 const isInspected = node.id === inspectedNodeId;
 
@@ -261,12 +315,18 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
                   <g
                     key={node.id}
                     opacity={nodeOpacity}
-                    className="transition-opacity duration-200 motion-reduce:transition-none"
+                    className="transition-opacity duration-300 motion-reduce:transition-none"
                   >
-                    <circle
+                    <motion.circle
                       cx={node.x}
                       cy={node.y}
-                      r={isInspected ? 6 : node.isCrossDomain ? 5 : 3}
+                      animate={{
+                        r: isInspected ? 6 : node.isCrossDomain ? 5 : 3,
+                      }}
+                      transition={{
+                        duration: shouldReduceMotion ? 0 : 0.22,
+                        ease: graphMotionEase,
+                      }}
                       className={
                         isInspected || node.isCrossDomain
                           ? "fill-burgundy-signal"
@@ -294,10 +354,27 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
                   </g>
                 );
               })}
-            </g>
+            </motion.g>
 
             {/* Domain anchors */}
-            <g aria-hidden="true">
+            <motion.g
+              aria-hidden="true"
+              initial={{
+                opacity: 0,
+              }}
+              whileInView={{
+                opacity: 1,
+              }}
+              viewport={{
+                once: true,
+                amount: 0.35,
+              }}
+              transition={{
+                duration: shouldReduceMotion ? 0 : 0.65,
+                delay: shouldReduceMotion ? 0 : 0.06,
+                ease: graphMotionEase,
+              }}
+            >
               {graph.domains.map((domain) => {
                 const isConnected = inspectedNode?.domains.includes(domain.id) ?? false;
 
@@ -311,22 +388,34 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
                     opacity={domainOpacity}
                     className="transition-opacity duration-200 motion-reduce:transition-none"
                   >
-                    <circle
+                    <motion.circle
                       cx={domain.x}
                       cy={domain.y}
                       r="20"
+                      animate={{
+                        strokeWidth: isConnected ? 1.75 : 1.25,
+                      }}
+                      transition={{
+                        duration: shouldReduceMotion ? 0 : 0.24,
+                        ease: graphMotionEase,
+                      }}
                       className={
                         isConnected
                           ? "fill-background stroke-burgundy-signal"
                           : "fill-background stroke-burgundy-signal/70"
                       }
-                      strokeWidth={isConnected ? 1.75 : 1.25}
                     />
 
-                    <circle
+                    <motion.circle
                       cx={domain.x}
                       cy={domain.y}
-                      r={isConnected ? 5 : 4}
+                      animate={{
+                        r: isConnected ? 5 : 4,
+                      }}
+                      transition={{
+                        duration: shouldReduceMotion ? 0 : 0.24,
+                        ease: graphMotionEase,
+                      }}
                       className="fill-burgundy"
                     />
 
@@ -350,7 +439,7 @@ export function KnowledgeGraph({ domains, nodes }: KnowledgeGraphProps) {
                   </g>
                 );
               })}
-            </g>
+            </motion.g>
           </svg>
 
           {/* Accessible interactive layer */}

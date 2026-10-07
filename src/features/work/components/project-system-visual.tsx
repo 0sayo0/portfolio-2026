@@ -1,4 +1,8 @@
+"use client";
+
 import Image from "next/image";
+import type { PointerEvent } from "react";
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 
 import type { Project } from "@/features/work/schemas/project-schema";
 
@@ -10,7 +14,6 @@ function WeatherSystemVisual() {
   return (
     <div aria-hidden="true" className="absolute inset-10 md:inset-16">
       <div className="border-border-subtle relative size-full border">
-        {/* Structural system */}
         <div className="bg-border-subtle absolute top-1/2 left-0 h-px w-full" />
         <div className="bg-border-subtle absolute top-0 left-1/2 h-full w-px" />
 
@@ -87,6 +90,7 @@ function WorkspaceSystemVisual() {
                 }).map((_, cardIndex) => (
                   <div key={cardIndex} className="border-border-subtle min-h-14 border p-3">
                     <div className="bg-technical-700 h-px w-2/3" />
+
                     <div className="bg-border-subtle mt-3 h-px w-1/2" />
                   </div>
                 ))}
@@ -113,10 +117,74 @@ function WorkspaceSystemVisual() {
 }
 
 export function ProjectSystemVisual({ project }: ProjectSystemVisualProps) {
+  const shouldReduceMotion = useReducedMotion();
+
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+
+  const springX = useSpring(pointerX, {
+    stiffness: 110,
+    damping: 24,
+    mass: 0.5,
+  });
+
+  const springY = useSpring(pointerY, {
+    stiffness: 110,
+    damping: 24,
+    mass: 0.5,
+  });
+
+  const rotateX = useTransform(springY, [-1, 1], [2.25, -2.25]);
+
+  const rotateY = useTransform(springX, [-1, 1], [-2.25, 2.25]);
+
+  const innerX = useTransform(springX, [-1, 1], [-6, 6]);
+
+  const innerY = useTransform(springY, [-1, 1], [-6, 6]);
+
+  const foregroundX = useTransform(springX, [-1, 1], [-3, 3]);
+
+  const foregroundY = useTransform(springY, [-1, 1], [-3, 3]);
+
+  function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
+    if (shouldReduceMotion || event.pointerType === "touch") {
+      return;
+    }
+
+    const bounds = event.currentTarget.getBoundingClientRect();
+
+    const x = (event.clientX - bounds.left) / bounds.width;
+
+    const y = (event.clientY - bounds.top) / bounds.height;
+
+    pointerX.set(x * 2 - 1);
+    pointerY.set(y * 2 - 1);
+  }
+
+  function handlePointerLeave() {
+    pointerX.set(0);
+    pointerY.set(0);
+  }
+
   return (
-    <div className="border-border-subtle bg-background relative min-h-96 overflow-hidden border lg:min-h-128">
+    <motion.div
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      style={{
+        rotateX,
+        rotateY,
+        transformPerspective: 1100,
+      }}
+      className="border-border-subtle bg-background relative min-h-96 overflow-hidden border lg:min-h-128"
+    >
       {/* Technical coordinates */}
-      <div className="pointer-events-none absolute inset-x-5 top-5 z-20 flex items-center justify-between">
+      <motion.div
+        style={{
+          x: foregroundX,
+          y: foregroundY,
+        }}
+        className="pointer-events-none absolute inset-x-5 top-5 z-20 flex items-center justify-between"
+      >
         <span className="text-technical-700 font-mono text-[0.5625rem] tracking-[0.14em] uppercase">
           Visual / {project.index}
         </span>
@@ -124,34 +192,60 @@ export function ProjectSystemVisual({ project }: ProjectSystemVisualProps) {
         <span className="text-technical-700 font-mono text-[0.5625rem] tracking-[0.14em] uppercase">
           {project.preview.src ? "Product view" : "System view"}
         </span>
-      </div>
+      </motion.div>
 
-      {project.preview.src ? (
-        <>
-          <Image
-            src={project.preview.src}
-            alt={project.preview.alt}
-            fill
-            sizes="(min-width: 1024px) 60vw, 100vw"
-            className="object-cover"
-          />
+      {/* Product / system layer */}
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          x: innerX,
+          y: innerY,
+        }}
+      >
+        {project.preview.src ? (
+          <>
+            <Image
+              src={project.preview.src}
+              alt={project.preview.alt}
+              fill
+              sizes="(min-width: 1024px) 60vw, 100vw"
+              className="object-cover"
+            />
 
-          <div className="from-background/85 via-background/10 absolute inset-0 bg-linear-to-t to-transparent" />
-        </>
-      ) : project.preview.kind === "weather-system" ? (
-        <WeatherSystemVisual />
-      ) : (
-        <WorkspaceSystemVisual />
-      )}
+            <div className="from-background/85 via-background/10 absolute inset-0 bg-linear-to-t to-transparent" />
+          </>
+        ) : project.preview.kind === "weather-system" ? (
+          <WeatherSystemVisual />
+        ) : (
+          <WorkspaceSystemVisual />
+        )}
+      </motion.div>
 
-      {/* Frame */}
+      {/* Fixed frame */}
       <div
         aria-hidden="true"
-        className="border-border-subtle pointer-events-none absolute inset-4 border"
+        className="border-border-subtle pointer-events-none absolute inset-4 z-10 border"
       />
 
+      {/* Corners */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-4 z-10">
+        <span className="bg-burgundy-signal absolute top-0 left-0 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+
+        <span className="bg-border-subtle absolute top-0 right-0 size-1 translate-x-1/2 -translate-y-1/2 rounded-full" />
+
+        <span className="bg-border-subtle absolute bottom-0 left-0 size-1 -translate-x-1/2 translate-y-1/2 rounded-full" />
+
+        <span className="bg-burgundy-signal absolute right-0 bottom-0 size-1 translate-x-1/2 translate-y-1/2 rounded-full" />
+      </div>
+
       {/* Project identity */}
-      <div className="absolute right-5 bottom-5 left-5 z-20 flex items-end justify-between gap-6">
+      <motion.div
+        style={{
+          x: foregroundX,
+          y: foregroundY,
+        }}
+        className="absolute right-5 bottom-5 left-5 z-20 flex items-end justify-between gap-6"
+      >
         <div>
           <p className="text-technical-500 font-mono text-[0.5625rem] tracking-[0.16em] uppercase">
             Project system
@@ -163,7 +257,7 @@ export function ProjectSystemVisual({ project }: ProjectSystemVisualProps) {
         <span className="text-burgundy-signal font-mono text-[0.625rem] tracking-[0.16em] uppercase">
           {project.status === "completed" ? "Resolved" : "Active"}
         </span>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
