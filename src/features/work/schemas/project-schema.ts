@@ -4,7 +4,13 @@ import { engineeringDomainIdSchema } from "@/features/engineering/schemas/engine
 
 export const projectStatusSchema = z.enum(["completed", "in-progress"]);
 
-export const projectVisualKindSchema = z.enum(["weather-system", "workspace-system"]);
+export const projectVisualKindSchema = z.enum([
+  "workspace-system",
+  "catalog-system",
+  "weather-system",
+  "crud-system",
+  "health-system",
+]);
 
 export const projectSchema = z.object({
   slug: z.string().min(1),
