@@ -33,7 +33,11 @@ export default function HomePage() {
         projects={projects}
       />
 
-      <ExperienceSection domains={engineeringDomains} experiences={experiences} />
+      <ExperienceSection
+        domains={engineeringDomains}
+        experiences={experiences}
+        knowledgeNodes={knowledgeNodes}
+      />
     </main>
   );
 }

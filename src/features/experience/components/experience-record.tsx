@@ -1,9 +1,11 @@
 import type { EngineeringDomain } from "@/features/engineering/schemas/engineering-domain-schema";
 import type { Experience } from "@/features/experience/schemas/experience-schema";
+import type { ExperienceKnowledgeRecord } from "@/features/experience/lib/experience-knowledge";
 
 interface ExperienceRecordProps {
   experience: Experience;
   domains: EngineeringDomain[];
+  knowledge: ExperienceKnowledgeRecord;
 }
 
 function getPeriodLabel(experience: Experience) {
@@ -29,7 +31,7 @@ function getModeLabel(mode: Experience["mode"]) {
   }
 }
 
-export function ExperienceRecord({ experience, domains }: ExperienceRecordProps) {
+export function ExperienceRecord({ experience, domains, knowledge }: ExperienceRecordProps) {
   return (
     <article className="border-border-subtle relative border-b py-14 md:py-20">
       <div className="grid gap-10 md:grid-cols-12 md:gap-8">
@@ -148,9 +150,44 @@ export function ExperienceRecord({ experience, domains }: ExperienceRecordProps)
             </span>
 
             <span className="text-technical-300 font-mono text-[0.625rem]">
-              {String(experience.knowledgeNodeIds.length).padStart(2, "0")}
+              {String(knowledge.nodes.length).padStart(2, "0")}
             </span>
           </div>
+
+          {knowledge.nodes.length > 0 && (
+            <div className="mt-6">
+              <p className="text-technical-500 font-mono text-[0.5625rem] tracking-[0.14em] uppercase">
+                Validated nodes
+              </p>
+
+              <div className="mt-4 flex flex-wrap gap-x-3 gap-y-3">
+                {knowledge.nodes.map((node) => (
+                  <span
+                    key={node.id}
+                    className={`border-b pb-1 text-xs ${
+                      node.domains.length > 1
+                        ? "border-burgundy/60 text-foreground"
+                        : "border-border-subtle text-technical-300"
+                    }`}
+                  >
+                    {node.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {knowledge.nodes.length > 0 && (
+            <div className="border-border-subtle mt-6 flex items-center justify-between border-t pt-4">
+              <span className="text-technical-500 font-mono text-[0.5625rem] tracking-[0.14em] uppercase">
+                Cross-domain
+              </span>
+
+              <span className="text-burgundy-signal font-mono text-[0.625rem]">
+                {String(knowledge.crossDomainNodes.length).padStart(2, "0")}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </article>

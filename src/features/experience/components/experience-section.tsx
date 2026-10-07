@@ -1,18 +1,27 @@
 import type { EngineeringDomain } from "@/features/engineering/schemas/engineering-domain-schema";
 import { ExperienceRecord } from "@/features/experience/components/experience-record";
 import type { Experience } from "@/features/experience/schemas/experience-schema";
+import type { KnowledgeNode } from "@/features/knowledge/schemas/knowledge-node-schema";
+import { createExperienceKnowledgeRecords } from "@/features/experience/lib/experience-knowledge";
 
 interface ExperienceSectionProps {
   domains: EngineeringDomain[];
   experiences: Experience[];
+  knowledgeNodes: KnowledgeNode[];
 }
 
-export function ExperienceSection({ domains, experiences }: ExperienceSectionProps) {
+export function ExperienceSection({
+  domains,
+  experiences,
+  knowledgeNodes,
+}: ExperienceSectionProps) {
   const currentExperiences = experiences.filter((experience) => experience.period.current).length;
 
   const consultingExperiences = experiences.filter(
     (experience) => experience.type === "consulting",
   ).length;
+
+  const experienceKnowledgeRecords = createExperienceKnowledgeRecords(experiences, knowledgeNodes);
 
   return (
     <section id="experience" className="border-border-subtle relative border-t">
@@ -117,7 +126,12 @@ export function ExperienceSection({ domains, experiences }: ExperienceSectionPro
         {/* Experience records */}
         <div>
           {experiences.map((experience) => (
-            <ExperienceRecord key={experience.id} experience={experience} domains={domains} />
+            <ExperienceRecord
+              key={experience.id}
+              experience={experience}
+              domains={domains}
+              knowledge={experienceKnowledgeRecords.get(experience.id)!}
+            />
           ))}
         </div>
       </div>
