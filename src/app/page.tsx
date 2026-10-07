@@ -7,6 +7,9 @@ import { EntranceSection } from "@/features/entrance/components/entrance-section
 import { KnowledgeSection } from "@/features/knowledge/components/knowledge-section";
 import { knowledgeNodes, knowledgeStats } from "@/features/knowledge/content/knowledge-nodes";
 
+import { WorkSection } from "@/features/work/components/work-section";
+import { projects } from "@/features/work/content/projects";
+
 export default function HomePage() {
   return (
     <main id="main-content">
@@ -20,6 +23,12 @@ export default function HomePage() {
         domains={engineeringDomains}
         nodes={knowledgeNodes}
         stats={knowledgeStats}
+      />
+
+      <WorkSection
+        domains={engineeringDomains}
+        knowledgeNodes={knowledgeNodes}
+        projects={projects}
       />
     </main>
   );
