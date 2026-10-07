@@ -28,7 +28,11 @@ export function ProjectCaseStudy({
   const projectDomains = domains.filter((domain) => project.domains.includes(domain.id));
 
   return (
-    <main className="bg-background text-foreground min-h-dvh">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="bg-background text-foreground min-h-dvh outline-none"
+    >
       {/* Case study navigation */}
       <header className="border-border-subtle bg-background/90 sticky top-0 z-50 border-b backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-400 items-center justify-between px-6 md:px-10 lg:px-[clamp(3rem,4vw,4.5rem)]">
@@ -52,7 +56,11 @@ export function ProjectCaseStudy({
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-400 px-6 md:px-10 lg:px-[clamp(3rem,4vw,4.5rem)]">
+      <div
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-400 px-6 outline-none md:px-10 lg:px-[clamp(3rem,4vw,4.5rem)]"
+      >
         {/* Hero */}
         <section className="border-border-subtle border-b py-16 md:py-24">
           <CaseStudyReveal amount={0.4} className="grid gap-12 lg:grid-cols-12 lg:items-end">
@@ -492,23 +500,20 @@ export function ProjectCaseStudy({
                   </a>
                 )}
 
-                {project.links.repository && (
+                {project.links.repositories.map((repository) => (
                   <a
-                    href={project.links.repository}
+                    key={repository.url}
+                    href={repository.url}
                     target="_blank"
                     rel="noreferrer"
-                    aria-label={
-                      project.status === "in-progress"
-                        ? `View ${project.name} development repository in a new tab`
-                        : `Open ${project.name} source repository in a new tab`
-                    }
+                    aria-label={`Open ${project.name} ${repository.label} repository in a new tab`}
                     className="border-border-subtle text-technical-300 hover:text-foreground inline-flex items-center gap-3 border-b pb-2 font-mono text-[0.625rem] tracking-[0.16em] uppercase transition-colors"
                   >
-                    {project.status === "in-progress" ? "View development" : "Source"}
+                    {project.status === "in-progress" ? "View development" : repository.label}
 
                     <span className="text-burgundy-signal">↗</span>
                   </a>
-                )}
+                ))}
 
                 <Link
                   href="/#work"

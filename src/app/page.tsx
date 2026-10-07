@@ -18,34 +18,36 @@ import { contactProfile } from "@/features/contact/content/contact-profile";
 
 export default function HomePage() {
   return (
-    <main id="main-content">
+    <main>
       <SiteHeader />
 
-      <EntranceSection />
+      <div id="main-content" tabIndex={-1} className="outline-none">
+        <EntranceSection />
 
-      <EngineeringSection domains={engineeringDomains} />
+        <EngineeringSection domains={engineeringDomains} />
 
-      <KnowledgeSection
-        domains={engineeringDomains}
-        nodes={knowledgeNodes}
-        stats={knowledgeStats}
-      />
+        <KnowledgeSection
+          domains={engineeringDomains}
+          nodes={knowledgeNodes}
+          stats={knowledgeStats}
+        />
 
-      <WorkSection
-        domains={engineeringDomains}
-        knowledgeNodes={knowledgeNodes}
-        projects={projects}
-      />
+        <WorkSection
+          domains={engineeringDomains}
+          knowledgeNodes={knowledgeNodes}
+          projects={projects}
+        />
 
-      <ExperienceSection
-        domains={engineeringDomains}
-        experiences={experiences}
-        knowledgeNodes={knowledgeNodes}
-      />
+        <ExperienceSection
+          domains={engineeringDomains}
+          experiences={experiences}
+          knowledgeNodes={knowledgeNodes}
+        />
 
-      <AboutSection profile={aboutProfile} />
+        <AboutSection profile={aboutProfile} />
 
-      <ContactSection profile={contactProfile} />
+        <ContactSection profile={contactProfile} />
+      </div>
     </main>
   );
 }
