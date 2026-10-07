@@ -529,17 +529,17 @@ export function ProjectSystemVisual({ project }: ProjectSystemVisualProps) {
         }}
       >
         {project.preview.src ? (
-          <div className="absolute inset-9 md:inset-14">
-            <div className="border-border-subtle bg-background relative size-full overflow-hidden border">
+          <div className="absolute inset-9 flex items-center justify-center md:inset-14">
+            <div className="border-border-subtle bg-background relative flex size-full items-center justify-center overflow-hidden border">
               <Image
                 src={project.preview.src}
                 alt={project.preview.alt}
-                fill
-                sizes="(min-width: 1024px) 55vw, 100vw"
-                className="object-cover object-center"
+                width={1586}
+                height={992}
+                unoptimized
+                sizes="(min-width: 1280px) 1100px, (min-width: 768px) 80vw, 92vw"
+                className="max-h-[82%] w-auto max-w-[88%] object-contain"
               />
-
-              <div className="from-background/55 absolute inset-0 bg-linear-to-t via-transparent to-transparent" />
 
               <div
                 aria-hidden="true"
@@ -547,11 +547,11 @@ export function ProjectSystemVisual({ project }: ProjectSystemVisualProps) {
               />
 
               <div className="pointer-events-none absolute top-4 right-4 left-4 flex items-center justify-between">
-                <span className="bg-background/80 text-technical-300 border-border-subtle border px-2 py-1 font-mono text-[0.5rem] tracking-[0.14em] uppercase backdrop-blur-sm">
+                <span className="bg-background/85 text-technical-300 border-border-subtle border px-2 py-1 font-mono text-[0.5rem] tracking-[0.14em] uppercase backdrop-blur-sm">
                   Product / Interface
                 </span>
 
-                <span className="bg-background/80 text-burgundy-signal border-border-subtle border px-2 py-1 font-mono text-[0.5rem] tracking-[0.14em] uppercase backdrop-blur-sm">
+                <span className="bg-background/85 text-burgundy-signal border-border-subtle border px-2 py-1 font-mono text-[0.5rem] tracking-[0.14em] uppercase backdrop-blur-sm">
                   Product view
                 </span>
               </div>

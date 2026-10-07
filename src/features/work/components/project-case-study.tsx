@@ -28,7 +28,11 @@ export function ProjectCaseStudy({
   const projectDomains = domains.filter((domain) => project.domains.includes(domain.id));
 
   return (
-    <main className="bg-background text-foreground min-h-dvh">
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="bg-background text-foreground min-h-dvh outline-none"
+    >
       {/* Case study navigation */}
       <header className="border-border-subtle bg-background/90 sticky top-0 z-50 border-b backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-400 items-center justify-between px-6 md:px-10 lg:px-[clamp(3rem,4vw,4.5rem)]">
@@ -52,7 +56,11 @@ export function ProjectCaseStudy({
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-400 px-6 md:px-10 lg:px-[clamp(3rem,4vw,4.5rem)]">
+      <div
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-400 px-6 outline-none md:px-10 lg:px-[clamp(3rem,4vw,4.5rem)]"
+      >
         {/* Hero */}
         <section className="border-border-subtle border-b py-16 md:py-24">
           <CaseStudyReveal amount={0.4} className="grid gap-12 lg:grid-cols-12 lg:items-end">
