@@ -9,6 +9,8 @@ import { knowledgeNodes, knowledgeStats } from "@/features/knowledge/content/kno
 
 import { WorkSection } from "@/features/work/components/work-section";
 import { projects } from "@/features/work/content/projects";
+import { ExperienceSection } from "@/features/experience/components/experience-section";
+import { experiences } from "@/features/experience/content/experiences";
 
 export default function HomePage() {
   return (
@@ -30,6 +32,8 @@ export default function HomePage() {
         knowledgeNodes={knowledgeNodes}
         projects={projects}
       />
+
+      <ExperienceSection domains={engineeringDomains} experiences={experiences} />
     </main>
   );
 }
